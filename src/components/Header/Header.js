@@ -13,7 +13,7 @@ const Header = () => {
 
   useEffect(() => {
       setModal(createWeb3Modal(t));
-  }, [setModal, t]);
+  }, [setModal]);
 
   useEffect(() => {
     if (web3Modal && (web3Modal.cachedProvider || window.ethereum)) {
@@ -46,7 +46,7 @@ const Header = () => {
             <Navbar.Text>
               <div>{}</div>
               <Button
-              //onClick={() => connectWallet(web3Modal)}
+              onClick={() => connectWallet(web3Modal)}
             >Connect</Button>
             </Navbar.Text>
           </Navbar.Collapse>
