@@ -287,8 +287,7 @@ export const hecoPools = [
     callFee: 0.25,
     buyTokenUrl:
       'https://exchange.lavaswap.com/#/swap?inputCurrency=0x5545153ccfca01fbd7dd11c0b23ba694d9509a6f&outputCurrency=0x56f95662e71f30b333b456439248c6de589082a4',
-    addLiquidityUrl:
-      'https://exchange.lavaswap.com/#/add/ETH/0x56f95662E71f30b333b456439248c6dE589082a4',
+    addLiquidityUrl: 'https://exchange.lavaswap.com/#/add/ETH/0x56f95662E71f30b333b456439248c6dE589082a4',
   },
 
   {

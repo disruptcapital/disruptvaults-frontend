@@ -6,7 +6,7 @@ import {
 } from 'constants/constants';
 
 export function disconnectWallet(web3, web3Modal) {
-  return dispatch => {
+  return (dispatch) => {
     dispatch({ type: HOME_DISCONNECT_WALLET_BEGIN });
 
     const promise = new Promise(async (resolve, reject) => {

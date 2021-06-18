@@ -10,6 +10,17 @@ const networkSettings = {
     rpcUrls: ['https://bsc-dataseed.binance.org'],
     blockExplorerUrls: ['https://bscscan.com/'],
   },
+  97: {
+    chainId: `0x${parseInt(97, 10).toString(16)}`,
+    chainName: 'BSC Testnet',
+    nativeCurrency: {
+      name: 'Binance Coin',
+      symbol: 'BNB',
+      decimals: 18,
+    },
+    rpcUrls: ['https://data-seed-prebsc-1-s1.binance.org:8545/'],
+    blockExplorerUrls: ['https://testnet.bscscan.com/'],
+  },
   128: {
     chainId: `0x${parseInt(128, 10).toString(16)}`,
     chainName: 'HECO Mainnet',
@@ -56,7 +67,7 @@ const networkSettings = {
   },
 };
 
-export const networkSetup = chainId => {
+export const networkSetup = (chainId) => {
   return new Promise((resolve, reject) => {
     const provider = window.ethereum;
     if (provider) {

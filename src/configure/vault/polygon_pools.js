@@ -46,8 +46,7 @@ export const polygonPools = [
     platform: 'Aave',
     assets: ['WBTC'],
     callFee: 0.5,
-    buyTokenUrl:
-      'https://quickswap.exchange/#/swap?outputCurrency=0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6',
+    buyTokenUrl: 'https://quickswap.exchange/#/swap?outputCurrency=0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6',
   },
   {
     id: 'aave-eth',
@@ -71,8 +70,7 @@ export const polygonPools = [
     platform: 'Aave',
     assets: ['ETH'],
     callFee: 0.5,
-    buyTokenUrl:
-      'https://quickswap.exchange/#/swap?outputCurrency=0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619',
+    buyTokenUrl: 'https://quickswap.exchange/#/swap?outputCurrency=0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619',
   },
   {
     id: 'quick-titan-eth',
@@ -98,8 +96,7 @@ export const polygonPools = [
     callFee: 0.5,
     addLiquidityUrl:
       'https://quickswap.exchange/#/add/0xaAa5B9e6c589642f98a1cDA99B9D024B8407285A/0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619',
-    buyTokenUrl:
-      'https://quickswap.exchange/#/swap?outputCurrency=0xaAa5B9e6c589642f98a1cDA99B9D024B8407285A',
+    buyTokenUrl: 'https://quickswap.exchange/#/swap?outputCurrency=0xaAa5B9e6c589642f98a1cDA99B9D024B8407285A',
   },
   {
     id: 'iron-iron-usdc-quick',
@@ -125,8 +122,7 @@ export const polygonPools = [
     callFee: 0.5,
     addLiquidityUrl:
       'https://quickswap.exchange/#/add/0xD86b5923F3AD7b585eD81B448170ae026c65ae9a/0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
-    buyTokenUrl:
-      'https://quickswap.exchange/#/swap?outputCurrency=0xD86b5923F3AD7b585eD81B448170ae026c65ae9a',
+    buyTokenUrl: 'https://quickswap.exchange/#/swap?outputCurrency=0xD86b5923F3AD7b585eD81B448170ae026c65ae9a',
   },
   {
     id: 'polycat-sushi-fish-matic',
@@ -393,8 +389,7 @@ export const polygonPools = [
     platform: 'IronFinance',
     assets: ['TITAN'],
     callFee: 0.05,
-    buyTokenUrl:
-      'https://app.sushi.com/#/swap?outputCurrency=0xaAa5B9e6c589642f98a1cDA99B9D024B8407285A',
+    buyTokenUrl: 'https://app.sushi.com/#/swap?outputCurrency=0xaAa5B9e6c589642f98a1cDA99B9D024B8407285A',
   },
   {
     id: 'iron-titan-iron',
@@ -635,8 +630,7 @@ export const polygonPools = [
     assets: ['TITAN', 'MATIC'],
     callFee: 0.5,
     addLiquidityUrl: 'https://app.sushi.com/add/ETH/0xaAa5B9e6c589642f98a1cDA99B9D024B8407285A',
-    buyTokenUrl:
-      'https://app.sushi.com/#/swap?outputCurrency=0xaAa5B9e6c589642f98a1cDA99B9D024B8407285A',
+    buyTokenUrl: 'https://app.sushi.com/#/swap?outputCurrency=0xaAa5B9e6c589642f98a1cDA99B9D024B8407285A',
   },
   {
     id: 'iron-iron-usdc',
@@ -662,8 +656,7 @@ export const polygonPools = [
     callFee: 0.5,
     addLiquidityUrl:
       'https://app.sushi.com/add/0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174/0xD86b5923F3AD7b585eD81B448170ae026c65ae9a',
-    buyTokenUrl:
-      'https://app.sushi.com/#/swap?outputCurrency=0xD86b5923F3AD7b585eD81B448170ae026c65ae9a',
+    buyTokenUrl: 'https://app.sushi.com/#/swap?outputCurrency=0xD86b5923F3AD7b585eD81B448170ae026c65ae9a',
   },
   {
     id: 'quick-matic-usdc',
@@ -687,8 +680,7 @@ export const polygonPools = [
     platform: 'QuickSwap',
     assets: ['MATIC', 'USDC'],
     callFee: 0.5,
-    addLiquidityUrl:
-      'https://quickswap.exchange/#/add/ETH/0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
+    addLiquidityUrl: 'https://quickswap.exchange/#/add/ETH/0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
     buyTokenUrl:
       'https://quickswap.exchange/#/swap?inputCurrency=ETH&outputCurrency=0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
   },
@@ -846,8 +838,7 @@ export const polygonPools = [
     callFee: 0.5,
     addLiquidityUrl:
       'https://polyzap.app/#/add/0x2791bca1f2de4661ed88a30c99a7a9449aa84174/0xeb2778f74E5ee038E67AA6c77f0F0451ABd748FD',
-    buyTokenUrl:
-      'https://polyzap.app/#/swap?outputCurrency=0xeb2778f74E5ee038E67AA6c77f0F0451ABd748FD',
+    buyTokenUrl: 'https://polyzap.app/#/swap?outputCurrency=0xeb2778f74E5ee038E67AA6c77f0F0451ABd748FD',
   },
   {
     id: 'pzap-pzap-matic',
@@ -872,8 +863,7 @@ export const polygonPools = [
     assets: ['PZAP', 'MATIC'],
     callFee: 0.5,
     addLiquidityUrl: 'https://polyzap.app/#/add/ETH/0xeb2778f74E5ee038E67AA6c77f0F0451ABd748FD',
-    buyTokenUrl:
-      'https://polyzap.app/#/swap?outputCurrency=0xeb2778f74E5ee038E67AA6c77f0F0451ABd748FD',
+    buyTokenUrl: 'https://polyzap.app/#/swap?outputCurrency=0xeb2778f74E5ee038E67AA6c77f0F0451ABd748FD',
   },
   {
     id: 'cometh-bifi-eth',
@@ -950,8 +940,7 @@ export const polygonPools = [
     platform: 'Aave',
     assets: ['MATIC'],
     callFee: 0.5,
-    buyTokenUrl:
-      'https://quickswap.exchange/#/swap?outputCurrency=0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
+    buyTokenUrl: 'https://quickswap.exchange/#/swap?outputCurrency=0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
   },
   {
     id: 'aave-aave',
@@ -975,8 +964,7 @@ export const polygonPools = [
     platform: 'Aave',
     assets: ['AAVE'],
     callFee: 0.5,
-    buyTokenUrl:
-      'https://quickswap.exchange/#/swap?outputCurrency=0xD6DF932A45C0f255f85145f286eA0b292B21C90B',
+    buyTokenUrl: 'https://quickswap.exchange/#/swap?outputCurrency=0xD6DF932A45C0f255f85145f286eA0b292B21C90B',
   },
   {
     id: 'aave-dai',
@@ -1000,8 +988,7 @@ export const polygonPools = [
     platform: 'Aave',
     assets: ['DAI'],
     callFee: 0.5,
-    buyTokenUrl:
-      'https://quickswap.exchange/#/swap?outputCurrency=0x8f3cf7ad23cd3cadbd9735aff958023239c6a063',
+    buyTokenUrl: 'https://quickswap.exchange/#/swap?outputCurrency=0x8f3cf7ad23cd3cadbd9735aff958023239c6a063',
   },
   {
     id: 'aave-usdc',
@@ -1025,8 +1012,7 @@ export const polygonPools = [
     platform: 'Aave',
     assets: ['USDC'],
     callFee: 0.5,
-    buyTokenUrl:
-      'https://quickswap.exchange/#/swap?outputCurrency=0x2791bca1f2de4661ed88a30c99a7a9449aa84174',
+    buyTokenUrl: 'https://quickswap.exchange/#/swap?outputCurrency=0x2791bca1f2de4661ed88a30c99a7a9449aa84174',
   },
   {
     id: 'sushi-crv-eth',
@@ -1752,8 +1738,7 @@ export const polygonPools = [
     platform: 'QuickSwap',
     assets: ['ETH', 'USDT'],
     callFee: 0.5,
-    addLiquidityUrl:
-      'https://quickswap.exchange/#/add/ETH/0xc2132d05d31c914a87c6611c10748aeb04b58e8f',
+    addLiquidityUrl: 'https://quickswap.exchange/#/add/ETH/0xc2132d05d31c914a87c6611c10748aeb04b58e8f',
     buyTokenUrl:
       'https://quickswap.exchange/#/swap?inputCurrency=ETH&outputCurrency=0xc2132d05d31c914a87c6611c10748aeb04b58e8f',
   },
@@ -1779,8 +1764,7 @@ export const polygonPools = [
     platform: 'QuickSwap',
     assets: ['ETH', 'MATIC'],
     callFee: 0.5,
-    addLiquidityUrl:
-      'https://quickswap.exchange/#/add/ETH/0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619',
+    addLiquidityUrl: 'https://quickswap.exchange/#/add/ETH/0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619',
     buyTokenUrl:
       'https://quickswap.exchange/#/swap?inputCurrency=0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270&outputCurrency=ETH',
   },

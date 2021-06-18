@@ -145,10 +145,8 @@ export const fantomPools = [
     platform: 'Ester',
     assets: ['EST', 'FTM'],
     callFee: 0.05,
-    addLiquidityUrl:
-      'https://swap.spiritswap.finance/#/add/FTM/0x181F3F22C9a751E2ce673498A03E1FDFC0ebBFB6',
-    buyTokenUrl:
-      'https://swap.spiritswap.finance/#/swap?outputCurrency=0x181f3f22c9a751e2ce673498a03e1fdfc0ebbfb6',
+    addLiquidityUrl: 'https://swap.spiritswap.finance/#/add/FTM/0x181F3F22C9a751E2ce673498A03E1FDFC0ebBFB6',
+    buyTokenUrl: 'https://swap.spiritswap.finance/#/swap?outputCurrency=0x181f3f22c9a751e2ce673498a03e1fdfc0ebbfb6',
   },
   {
     id: 'ester-est',
@@ -172,8 +170,7 @@ export const fantomPools = [
     platform: 'Ester',
     assets: ['EST'],
     callFee: 0.05,
-    buyTokenUrl:
-      'https://swap.spiritswap.finance/#/swap?outputCurrency=0x181f3f22c9a751e2ce673498a03e1fdfc0ebbfb6',
+    buyTokenUrl: 'https://swap.spiritswap.finance/#/swap?outputCurrency=0x181f3f22c9a751e2ce673498a03e1fdfc0ebbfb6',
   },
   {
     id: 'boo-woofy-ftm',
@@ -296,8 +293,7 @@ export const fantomPools = [
     assets: ['FROYO', 'FTM'],
     callFee: 0.5,
     addLiquidityUrl: 'https://app.sushi.com/add/ETH/0xA92d41Ab8eFeE617d80a829CD9F5683c5F793ADA',
-    buyTokenUrl:
-      'https://app.sushi.com/swap?outputCurrency=0xA92d41Ab8eFeE617d80a829CD9F5683c5F793ADA',
+    buyTokenUrl: 'https://app.sushi.com/swap?outputCurrency=0xA92d41Ab8eFeE617d80a829CD9F5683c5F793ADA',
   },
   {
     id: 'boo-link-ftm',

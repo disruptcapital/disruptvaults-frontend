@@ -29,6 +29,6 @@ const App = () => {
       </div>
     </WalletContextProvider>
   );
-}
+};
 
 export default App;

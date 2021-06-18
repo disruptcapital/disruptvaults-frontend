@@ -1,4 +1,4 @@
-import React, { useReducer, createContext } from "react";
+import React, { useReducer, createContext } from 'react';
 //import { connectWallet, disconnectWallet } from 'hooks';
 import {
   HOME_CONNECT_WALLET_BEGIN,
@@ -57,12 +57,8 @@ const reducer = (state, action) => {
   }
 };
 
-export const WalletContextProvider = props => {
+export const WalletContextProvider = (props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  return (
-    <WalletContext.Provider value={[state, dispatch]}>
-      {props.children}
-    </WalletContext.Provider>
-  );
+  return <WalletContext.Provider value={[state, dispatch]}>{props.children}</WalletContext.Provider>;
 };

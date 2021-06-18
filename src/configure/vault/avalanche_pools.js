@@ -150,10 +150,8 @@ export const avalanchePools = [
     platform: 'OliveSwap',
     assets: ['OLIVE', 'AVAX'],
     callFee: 0.25,
-    addLiquidityUrl:
-      'https://swap.olive.cash/#/add/AVAX/0x617724974218A18769020A70162165A539c07E8a',
-    buyTokenUrl:
-      'https://swap.olive.cash/#/swap?outputCurrency=0x617724974218A18769020A70162165A539c07E8a',
+    addLiquidityUrl: 'https://swap.olive.cash/#/add/AVAX/0x617724974218A18769020A70162165A539c07E8a',
+    buyTokenUrl: 'https://swap.olive.cash/#/swap?outputCurrency=0x617724974218A18769020A70162165A539c07E8a',
   },
   {
     id: 'olive-olive-usdt',
@@ -179,8 +177,7 @@ export const avalanchePools = [
     callFee: 0.25,
     addLiquidityUrl:
       'https://swap.olive.cash/#/add/0xde3A24028580884448a5397872046a019649b084/0x617724974218A18769020A70162165A539c07E8a',
-    buyTokenUrl:
-      'https://swap.olive.cash/#/swap?outputCurrency=0x617724974218A18769020A70162165A539c07E8a',
+    buyTokenUrl: 'https://swap.olive.cash/#/swap?outputCurrency=0x617724974218A18769020A70162165A539c07E8a',
   },
 
   {
@@ -230,8 +227,7 @@ export const avalanchePools = [
     platform: 'Complus',
     assets: ['USDT', 'AVAX'],
     callFee: 0.25,
-    addLiquidityUrl:
-      'https://avadex.complus.exchange/#/add/AVAX/0xde3A24028580884448a5397872046a019649b084',
+    addLiquidityUrl: 'https://avadex.complus.exchange/#/add/AVAX/0xde3A24028580884448a5397872046a019649b084',
     buyTokenUrl:
       'https://avadex.complus.exchange/#/swap?inputCurrency=0xde3A24028580884448a5397872046a019649b084&outputCurrency=AVAX',
   },
@@ -257,8 +253,7 @@ export const avalanchePools = [
     platform: 'Complus',
     assets: ['ETH', 'AVAX'],
     callFee: 0.25,
-    addLiquidityUrl:
-      'https://avadex.complus.exchange/#/add/AVAX/0xf20d962a6c8f70c731bd838a3a388D7d48fA6e15',
+    addLiquidityUrl: 'https://avadex.complus.exchange/#/add/AVAX/0xf20d962a6c8f70c731bd838a3a388D7d48fA6e15',
     buyTokenUrl:
       'https://avadex.complus.exchange/#/swap?inputCurrency=0xf20d962a6c8f70c731bd838a3a388D7d48fA6e15&outputCurrency=AVAX',
   },
@@ -284,8 +279,7 @@ export const avalanchePools = [
     platform: 'Complus',
     assets: ['PNG', 'AVAX'],
     callFee: 0.25,
-    addLiquidityUrl:
-      'https://avadex.complus.exchange/#/add/AVAX/0x60781C2586D68229fde47564546784ab3fACA982',
+    addLiquidityUrl: 'https://avadex.complus.exchange/#/add/AVAX/0x60781C2586D68229fde47564546784ab3fACA982',
     buyTokenUrl:
       'https://avadex.complus.exchange/#/swap?inputCurrency=0x60781C2586D68229fde47564546784ab3fACA982&outputCurrency=AVAX',
   },
@@ -312,8 +306,7 @@ export const avalanchePools = [
     platform: 'Snowball',
     assets: ['SNOB', 'AVAX'],
     callFee: 0.25,
-    addLiquidityUrl:
-      'https://app.pangolin.exchange/#/add/AVAX/0xC38f41A296A4493Ff429F1238e030924A1542e50',
+    addLiquidityUrl: 'https://app.pangolin.exchange/#/add/AVAX/0xC38f41A296A4493Ff429F1238e030924A1542e50',
     buyTokenUrl:
       'https://app.pangolin.exchange/#/swap?inputCurrency=0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7&outputCurrency=0xC38f41A296A4493Ff429F1238e030924A1542e50',
   },
@@ -340,8 +333,7 @@ export const avalanchePools = [
     platform: 'Complus',
     assets: ['COM', 'AVAX'],
     callFee: 0.25,
-    addLiquidityUrl:
-      'https://avadex.complus.exchange/#/add/AVAX/0x3711c397B6c8F7173391361e27e67d72F252cAad',
+    addLiquidityUrl: 'https://avadex.complus.exchange/#/add/AVAX/0x3711c397B6c8F7173391361e27e67d72F252cAad',
     buyTokenUrl:
       'https://avadex.complus.exchange/#/swap?inputCurrency=0x3711c397B6c8F7173391361e27e67d72F252cAad&outputCurrency=AVAX',
   },
@@ -368,8 +360,7 @@ export const avalanchePools = [
     platform: 'Complus',
     assets: ['DAI', 'AVAX'],
     callFee: 0.25,
-    addLiquidityUrl:
-      'https://avadex.complus.exchange/#/add/AVAX/0xbA7dEebBFC5fA1100Fb055a87773e1E99Cd3507a',
+    addLiquidityUrl: 'https://avadex.complus.exchange/#/add/AVAX/0xbA7dEebBFC5fA1100Fb055a87773e1E99Cd3507a',
     buyTokenUrl:
       'https://avadex.complus.exchange/#/swap?inputCurrency=0xbA7dEebBFC5fA1100Fb055a87773e1E99Cd3507a&outputCurrency=AVAX',
   },
@@ -396,8 +387,7 @@ export const avalanchePools = [
     platform: 'Pangolin',
     assets: ['SUSHI', 'AVAX'],
     callFee: 0.25,
-    addLiquidityUrl:
-      'https://app.pangolin.exchange/#/add/AVAX/0x39cf1BD5f15fb22eC3D9Ff86b0727aFc203427cc',
+    addLiquidityUrl: 'https://app.pangolin.exchange/#/add/AVAX/0x39cf1BD5f15fb22eC3D9Ff86b0727aFc203427cc',
     buyTokenUrl:
       'https://app.pangolin.exchange/#/swap?inputCurrency=0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7&outputCurrency=0x39cf1BD5f15fb22eC3D9Ff86b0727aFc203427cc',
   },
@@ -424,8 +414,7 @@ export const avalanchePools = [
     platform: 'Pangolin',
     assets: ['WBTC', 'AVAX'],
     callFee: 0.25,
-    addLiquidityUrl:
-      'https://app.pangolin.exchange/#/add/AVAX/0x408D4cD0ADb7ceBd1F1A1C33A0Ba2098E1295bAB',
+    addLiquidityUrl: 'https://app.pangolin.exchange/#/add/AVAX/0x408D4cD0ADb7ceBd1F1A1C33A0Ba2098E1295bAB',
     buyTokenUrl:
       'https://app.pangolin.exchange/#/swap?inputCurrency=0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7&outputCurrency=0x408D4cD0ADb7ceBd1F1A1C33A0Ba2098E1295bAB',
   },
@@ -452,8 +441,7 @@ export const avalanchePools = [
     platform: 'Pangolin',
     assets: ['LINK', 'AVAX'],
     callFee: 0.25,
-    addLiquidityUrl:
-      'https://app.pangolin.exchange/#/add/AVAX/0xB3fe5374F67D7a22886A0eE082b2E2f9d2651651',
+    addLiquidityUrl: 'https://app.pangolin.exchange/#/add/AVAX/0xB3fe5374F67D7a22886A0eE082b2E2f9d2651651',
     buyTokenUrl:
       'https://app.pangolin.exchange/#/swap?inputCurrency=0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7&outputCurrency=0xB3fe5374F67D7a22886A0eE082b2E2f9d2651651',
   },
@@ -480,8 +468,7 @@ export const avalanchePools = [
     platform: 'Pangolin',
     assets: ['UNI', 'AVAX'],
     callFee: 0.25,
-    addLiquidityUrl:
-      'https://app.pangolin.exchange/#/add/AVAX/0xf39f9671906d8630812f9d9863bBEf5D523c84Ab',
+    addLiquidityUrl: 'https://app.pangolin.exchange/#/add/AVAX/0xf39f9671906d8630812f9d9863bBEf5D523c84Ab',
     buyTokenUrl:
       'https://app.pangolin.exchange/#/swap?inputCurrency=0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7&outputCurrency=0xf39f9671906d8630812f9d9863bBEf5D523c84Ab',
   },
@@ -536,8 +523,7 @@ export const avalanchePools = [
     platform: 'Pangolin',
     assets: ['ETH', 'AVAX'],
     callFee: 0.25,
-    addLiquidityUrl:
-      'https://app.pangolin.exchange/#/add/AVAX/0xf20d962a6c8f70c731bd838a3a388D7d48fA6e15',
+    addLiquidityUrl: 'https://app.pangolin.exchange/#/add/AVAX/0xf20d962a6c8f70c731bd838a3a388D7d48fA6e15',
     buyTokenUrl:
       'https://app.pangolin.exchange/#/swap?inputCurrency=0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7&outputCurrency=0xf20d962a6c8f70c731bd838a3a388D7d48fA6e15',
   },
@@ -564,8 +550,7 @@ export const avalanchePools = [
     platform: 'Pangolin',
     assets: ['USDT', 'AVAX'],
     callFee: 0.25,
-    addLiquidityUrl:
-      'https://app.pangolin.exchange/#/add/AVAX/0xde3A24028580884448a5397872046a019649b084',
+    addLiquidityUrl: 'https://app.pangolin.exchange/#/add/AVAX/0xde3A24028580884448a5397872046a019649b084',
     buyTokenUrl:
       'https://app.pangolin.exchange/#/swap?inputCurrency=0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7&outputCurrency=0xde3A24028580884448a5397872046a019649b084',
   },
@@ -592,8 +577,7 @@ export const avalanchePools = [
     platform: 'Pangolin',
     assets: ['PNG', 'AVAX'],
     callFee: 0.25,
-    addLiquidityUrl:
-      'https://app.pangolin.exchange/#/add/AVAX/0x60781C2586D68229fde47564546784ab3fACA982',
+    addLiquidityUrl: 'https://app.pangolin.exchange/#/add/AVAX/0x60781C2586D68229fde47564546784ab3fACA982',
     buyTokenUrl:
       'https://app.pangolin.exchange/#/swap?inputCurrency=0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7&outputCurrency=0x60781C2586D68229fde47564546784ab3fACA982',
   },

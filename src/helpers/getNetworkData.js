@@ -26,11 +26,11 @@ import {
 } from 'configure';
 
 const networkTxUrls = {
-  56: hash => `https://bscscan.com/tx/${hash}`,
-  128: hash => `https://hecoinfo.com/tx/${hash}`,
-  43114: hash => `https://cchain.explorer.avax.network/tx/${hash}/token-transfers`,
-  137: hash => `https://explorer-mainnet.maticvigil.com/tx/${hash}/token-transfers`,
-  250: hash => `https://ftmscan.com/tx/${hash}`,
+  56: (hash) => `https://bscscan.com/tx/${hash}`,
+  128: (hash) => `https://hecoinfo.com/tx/${hash}`,
+  43114: (hash) => `https://cchain.explorer.avax.network/tx/${hash}/token-transfers`,
+  137: (hash) => `https://explorer-mainnet.maticvigil.com/tx/${hash}/token-transfers`,
+  250: (hash) => `https://ftmscan.com/tx/${hash}`,
 };
 
 const networkFriendlyName = {
@@ -42,7 +42,7 @@ const networkFriendlyName = {
 };
 
 export const getNetworkCoin = () => {
-  return nativeCoins.find(coin => coin.chainId === process.env.REACT_APP_NETWORK_ID);
+  return nativeCoins.find((coin) => coin.chainId === process.env.REACT_APP_NETWORK_ID);
 };
 
 export const getNetworkPools = () => {
@@ -76,7 +76,7 @@ export const getNetworkTokens = () => {
       return fantomAddressBook.tokens;
     default:
       throw new Error(
-        `Create address book for this chainId first. Check out https://github.com/beefyfinance/address-book`
+        `Create address book for this chainId first. Check out https://github.com/beefyfinance/address-book`,
       );
   }
 };
@@ -98,7 +98,7 @@ export const getNetworkBurnTokens = () => {
       return {};
     default:
       throw new Error(
-        `Create address book for this chainId first. Check out https://github.com/beefyfinance/address-book`
+        `Create address book for this chainId first. Check out https://github.com/beefyfinance/address-book`,
       );
   }
 };
@@ -185,7 +185,7 @@ export const getNetworkMulticall = () => {
   }
 };
 
-export const getNetworkConnectors = t => {
+export const getNetworkConnectors = (t) => {
   switch (process.env.REACT_APP_NETWORK_ID) {
     case '56':
       return {
@@ -249,9 +249,71 @@ export const getNetworkConnectors = t => {
           },
         },
       };
-      default:
-        return {};
-    }
-  };
+    case '97':
+      return {
+        network: 'binance',
+        cacheProvider: true,
+        providerOptions: {
+          injected: {
+            display: {
+              name: 'Injected',
+              description: t('Home-BrowserWallet'),
+            },
+          },
+          walletconnect: {
+            package: WalletConnectProvider,
+            options: {
+              rpc: {
+                1: 'https://bsc-dataseed.binance.org/',
+                97: 'https://data-seed-prebsc-1-s1.binance.org:8545/',
+              },
+            },
+          },
+          'custom-binance': {
+            display: {
+              name: 'Binance',
+              description: t('Binance Chain Wallet'),
+              logo: require(`images/wallets/binance-wallet.png`),
+            },
+            package: 'binance',
+            connector: async (ProviderPackage, options) => {
+              const provider = window.BinanceChain;
+              await provider.enable();
+              return provider;
+            },
+          },
+          'custom-math': {
+            display: {
+              name: 'Math',
+              description: t('Math Wallet'),
+              logo: require(`images/wallets/math-wallet.svg`),
+            },
+            package: 'math',
+            connector: connectors.injected,
+          },
+          'custom-twt': {
+            display: {
+              name: 'Trust',
+              description: t('Trust Wallet'),
+              logo: require(`images/wallets/trust-wallet.svg`),
+            },
+            package: 'twt',
+            connector: connectors.injected,
+          },
+          'custom-safepal': {
+            display: {
+              name: 'SafePal',
+              description: t('SafePal App'),
+              logo: require(`images/wallets/safepal-wallet.svg`),
+            },
+            package: 'safepal',
+            connector: connectors.injected,
+          },
+        },
+      };
+    default:
+      return {};
+  }
+};
 export const getNetworkTxUrl = networkTxUrls[process.env.REACT_APP_NETWORK_ID];
 export const getNetworkFriendlyName = () => networkFriendlyName[process.env.REACT_APP_NETWORK_ID];
