@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Container } from 'react-bootstrap';
 import Accordion from 'react-bootstrap/Accordion';
 import Card from 'react-bootstrap/Card';
-import {getNetworkPools} from '../../helpers/getNetworkData';
-import {useConnectWallet} from '../../hooks/connectWallet';
+import {getNetworkPools} from 'common/getNetworkData';
+import {useConnectWallet} from 'features/home/redux/hooks';
 import {erc20ABI} from '../../configure/abi';
 
 const Vaults = (props) => {
