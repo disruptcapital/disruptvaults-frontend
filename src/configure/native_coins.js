@@ -16,6 +16,14 @@ export const nativeCoins = [
     allowance: Infinity,
   },
   {
+    chainId: 97,
+    name: 'Binance Coin',
+    symbol: 'BNB',
+    decimals: 18,
+    wrappedSymbol: 'WBNB',
+    allowance: Infinity,
+  },
+  {
     chainId: 128,
     name: 'Heco Token',
     symbol: 'HT',

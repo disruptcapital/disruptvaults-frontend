@@ -10,6 +10,10 @@ import {
   bscStakePools,
   bscAddressBook,
   bscZaps,
+  testnetPools,
+  testnetStakePools,
+  testnetAddressBook,
+  testnetZaps,
   fantomPools,
   fantomStakePools,
   fantomAddressBook,
@@ -27,6 +31,7 @@ import {
 
 const networkTxUrls = {
   56: (hash) => `https://bscscan.com/tx/${hash}`,
+  97: (hash) => `https://testnet.bscscan.com/tx/${hash}`,
   128: (hash) => `https://hecoinfo.com/tx/${hash}`,
   43114: (hash) => `https://cchain.explorer.avax.network/tx/${hash}/token-transfers`,
   137: (hash) => `https://explorer-mainnet.maticvigil.com/tx/${hash}/token-transfers`,
@@ -35,6 +40,7 @@ const networkTxUrls = {
 
 const networkFriendlyName = {
   56: 'BSC',
+  97: 'TestNet',
   128: 'HECO',
   43114: 'AVAX',
   137: 'Polygon',
@@ -49,6 +55,8 @@ export const getNetworkPools = () => {
   switch (process.env.REACT_APP_NETWORK_ID) {
     case '56':
       return bscPools;
+    case '97':
+        return testnetPools;
     case '128':
       return hecoPools;
     case '43114':
@@ -66,6 +74,8 @@ export const getNetworkTokens = () => {
   switch (process.env.REACT_APP_NETWORK_ID) {
     case '56':
       return bscAddressBook.tokens;
+    case '97':
+        return testnetAddressBook.tokens;
     case '128':
       return hecoAddressBook.tokens;
     case '43114':
@@ -88,6 +98,8 @@ export const getNetworkBurnTokens = () => {
         [bscAddressBook.tokens.GARUDA.symbol]: bscAddressBook.tokens.GARUDA,
         [bscAddressBook.tokens.SDUMP.symbol]: bscAddressBook.tokens.SDUMP,
       };
+    case '97':
+      return {};
     case '128':
       return {};
     case '43114':
@@ -107,6 +119,8 @@ export const getNetworkZaps = () => {
   switch (process.env.REACT_APP_NETWORK_ID) {
     case '56':
       return bscZaps;
+    case '97':
+        return testnetZaps;
     case '128':
       return hecoZaps;
     case '43114':
@@ -124,6 +138,8 @@ export const getNetworkStakePools = () => {
   switch (process.env.REACT_APP_NETWORK_ID) {
     case '56':
       return bscStakePools;
+    case '97':
+        return testnetStakePools;
     case '128':
       return hecoStakePools;
     case '43114':
@@ -155,6 +171,10 @@ export const getNetworkStables = () => {
         'IRON',
         'DOLLY',
       ];
+      case '97':
+        return [
+          'BUSD'          
+        ];
     case '128':
       return ['USDT', 'HUSD'];
     case '43114':
@@ -172,6 +192,8 @@ export const getNetworkMulticall = () => {
   switch (process.env.REACT_APP_NETWORK_ID) {
     case '56':
       return '0xB94858b0bB5437498F5453A16039337e5Fdc269C';
+    case '97':
+      throw 'WTF IS THIS?';
     case '128':
       return '0x2776CF9B6E2Fa7B33A37139C3CB1ee362Ff0356e';
     case '43114':
