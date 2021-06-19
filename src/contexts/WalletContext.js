@@ -1,11 +1,13 @@
 import React, { useReducer, createContext } from 'react';
-//import { connectWallet, disconnectWallet } from 'hooks';
 import {
   HOME_CONNECT_WALLET_BEGIN,
   HOME_CONNECT_WALLET_SUCCESS,
   HOME_CONNECT_WALLET_FAILURE,
   HOME_ACCOUNTS_CHANGED,
   HOME_NETWORK_CHANGED,
+  HOME_DISCONNECT_WALLET_BEGIN,
+  HOME_DISCONNECT_WALLET_SUCCESS,
+  HOME_DISCONNECT_WALLET_FAILURE,
 } from 'constants/constants';
 
 export const WalletContext = createContext();
@@ -51,7 +53,27 @@ const reducer = (state, action) => {
         ...state,
         connectWalletPending: false,
       };
+    case HOME_DISCONNECT_WALLET_BEGIN:
+      return {
+        ...state,
+        disconnectWalletPending: true,
+      };
 
+    case HOME_DISCONNECT_WALLET_SUCCESS:
+      return {
+        ...state,
+        address: '',
+        web3: null,
+        connected: false,
+        disconnectWalletPending: false,
+      };
+    case HOME_DISCONNECT_WALLET_FAILURE:
+      return {
+        ...state,
+        web3: null,
+        address: '',
+        disconnectWalletPending: false,
+      };
     default:
       return state;
   }

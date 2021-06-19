@@ -1,34 +1,79 @@
+import React, { useEffect, useState } from 'react';
+import { Provider } from 'react-redux';
+import store from './common/store';
+
 import 'bootstrap/scss/bootstrap.scss';
 import './App.scss';
 
 import { Vaults } from 'components/Vaults';
 import { Header } from 'components/Header';
-import { WalletContextProvider } from 'context/connectWalletContext';
+import { createWeb3Modal } from 'web3/createWeb3Modal';
+import { useConnectWallet, useDisconnectWallet } from 'features/home/redux/hooks';
+import { networkSetup } from 'common/networkSetup';
 
 const App = () => {
+  const [web3Modal, setModal] = useState(null);
+  const { connectWallet, web3, address, networkId, connected, connectWalletPending } = useConnectWallet();
+  const { disconnectWallet } = useDisconnectWallet();
+
+  useEffect(() => {
+    setModal(createWeb3Modal());
+  }, [setModal]);
+
+  useEffect(() => {
+    if (web3Modal && (web3Modal.cachedProvider || window.ethereum)) {
+      connectWallet(web3Modal);
+    }
+  }, [web3Modal, connectWallet]);
+
+  useEffect(() => {
+    if (
+      web3 &&
+      address &&
+      !connectWalletPending &&
+      networkId &&
+      Boolean(networkId !== Number(process.env.REACT_APP_NETWORK_ID))
+    ) {
+      networkSetup(process.env.REACT_APP_NETWORK_ID).catch((e) => {
+        console.error(e);
+        alert('Network-Error');
+      });
+    }
+  }, [web3, address, networkId, connectWalletPending]);
   return (
-    <WalletContextProvider>
-      <div id="app" className="h-100 text-light bg-dark">
-        <div class="container d-flex w-100 h-100 p-3 mx-auto flex-column">
-          <Header />
-          <main className="px-3 text-center">
-            <h2>Compounding...</h2>
-            <p>Binance Smart Chain yield aggregators with a fresh perspective.</p>
-            <Vaults />
-          </main>
-          <footer class="mt-auto text-white-50 text-center">
-            <p>
-              Yield Optimizing Strategies by{' '}
-              <a href="https://twitter.com/disrupttechno" class="text-white">
-                @disruptcapital
-              </a>
-              .
-            </p>
-          </footer>
-        </div>
+    <div id="app" className="h-100 text-light bg-dark">
+      <div className="container d-flex w-100 h-100 p-3 mx-auto flex-column">
+        <Header
+          address={address}
+          connected={connected}
+          connectWallet={() => connectWallet(web3Modal)}
+          disconnectWallet={() => disconnectWallet(web3, web3Modal)}
+        />
+        <main className="px-3 text-center">
+          <h2>Compounding...</h2>
+          <p>Binance Smart Chain yield aggregators with a fresh perspective.</p>
+          <Vaults />
+        </main>
+        <footer className="mt-auto text-white-50 text-center">
+          <p>
+            Yield Optimizing Strategies by{' '}
+            <a href="https://twitter.com/disrupttechno" className="text-white">
+              @disruptcapital
+            </a>
+            .
+          </p>
+        </footer>
       </div>
-    </WalletContextProvider>
+    </div>
   );
 };
 
-export default App;
+const AppWrapper = () => {
+  return (
+    <Provider store={store}>
+      <App />
+    </Provider>
+  );
+};
+
+export default AppWrapper;

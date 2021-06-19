@@ -195,7 +195,7 @@ export const getNetworkConnectors = (t) => {
           injected: {
             display: {
               name: 'Injected',
-              description: t('Home-BrowserWallet'),
+              description: 'Home-BrowserWallet',
             },
           },
           walletconnect: {
@@ -210,7 +210,7 @@ export const getNetworkConnectors = (t) => {
           'custom-binance': {
             display: {
               name: 'Binance',
-              description: t('Binance Chain Wallet'),
+              description: 'Binance Chain Wallet',
               logo: require(`images/wallets/binance-wallet.png`),
             },
             package: 'binance',
@@ -223,7 +223,7 @@ export const getNetworkConnectors = (t) => {
           'custom-math': {
             display: {
               name: 'Math',
-              description: t('Math Wallet'),
+              description: 'Math Wallet',
               logo: require(`images/wallets/math-wallet.svg`),
             },
             package: 'math',
@@ -232,7 +232,7 @@ export const getNetworkConnectors = (t) => {
           'custom-twt': {
             display: {
               name: 'Trust',
-              description: t('Trust Wallet'),
+              description: 'Trust Wallet',
               logo: require(`images/wallets/trust-wallet.svg`),
             },
             package: 'twt',
@@ -241,7 +241,7 @@ export const getNetworkConnectors = (t) => {
           'custom-safepal': {
             display: {
               name: 'SafePal',
-              description: t('SafePal App'),
+              description: 'SafePal App',
               logo: require(`images/wallets/safepal-wallet.svg`),
             },
             package: 'safepal',
@@ -257,7 +257,7 @@ export const getNetworkConnectors = (t) => {
           injected: {
             display: {
               name: 'Injected',
-              description: t('Home-BrowserWallet'),
+              description: 'Home-BrowserWallet',
             },
           },
           walletconnect: {
@@ -272,7 +272,7 @@ export const getNetworkConnectors = (t) => {
           'custom-binance': {
             display: {
               name: 'Binance',
-              description: t('Binance Chain Wallet'),
+              description: 'Binance Chain Wallet',
               logo: require(`images/wallets/binance-wallet.png`),
             },
             package: 'binance',
@@ -285,7 +285,7 @@ export const getNetworkConnectors = (t) => {
           'custom-math': {
             display: {
               name: 'Math',
-              description: t('Math Wallet'),
+              description: 'Math Wallet',
               logo: require(`images/wallets/math-wallet.svg`),
             },
             package: 'math',
@@ -294,7 +294,7 @@ export const getNetworkConnectors = (t) => {
           'custom-twt': {
             display: {
               name: 'Trust',
-              description: t('Trust Wallet'),
+              description: 'Trust Wallet',
               logo: require(`images/wallets/trust-wallet.svg`),
             },
             package: 'twt',
@@ -303,7 +303,7 @@ export const getNetworkConnectors = (t) => {
           'custom-safepal': {
             display: {
               name: 'SafePal',
-              description: t('SafePal App'),
+              description: 'SafePal App',
               logo: require(`images/wallets/safepal-wallet.svg`),
             },
             package: 'safepal',

@@ -1,51 +1,59 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Container, Navbar, Button } from 'react-bootstrap';
-import { useTranslation } from 'react-i18next';
-import { createWeb3Modal } from 'web3/createWeb3Modal';
+import { renderIcon } from '@download/blockies';
 
-import { useConnectWallet } from 'hooks/connectWallet';
-import { networkSetup } from 'helpers/networkSetup';
-
-const Header = () => {
-  const { t } = useTranslation();
-  const [web3Modal, setModal] = useState(null);
-  const { connectWallet, web3, address, networkId, connected, connectWalletPending } = useConnectWallet();
+const Header = (props) => {
+  const { address, connected, connectWallet, disconnectWallet } = props;
+  const [dataUrl, setDataUrl] = useState(null);
+  const canvasRef = useRef(null);
+  const [shortAddress, setShortAddress] = useState('');
 
   useEffect(() => {
-    setModal(createWeb3Modal(t));
-  }, [setModal]);
-
-  useEffect(() => {
-    if (web3Modal && (web3Modal.cachedProvider || window.ethereum)) {
-      connectWallet(web3Modal);
+    if (!connected) {
+      return;
     }
-  }, [web3Modal, connectWallet]);
 
-  useEffect(() => {
-    if (
-      web3 &&
-      address &&
-      !connectWalletPending &&
-      networkId &&
-      Boolean(networkId !== Number(process.env.REACT_APP_NETWORK_ID))
-    ) {
-      networkSetup(process.env.REACT_APP_NETWORK_ID).catch((e) => {
-        console.error(e);
-        alert(t('Network-Error'));
-      });
+    const canvas = canvasRef.current;
+    renderIcon({ seed: address.toLowerCase() }, canvas);
+    const updatedDataUrl = canvas.toDataURL();
+    if (updatedDataUrl !== dataUrl) {
+      setDataUrl(updatedDataUrl);
     }
-  }, [web3, address, networkId, connectWalletPending, t]);
+    if (address.length < 11) {
+      setShortAddress(address);
+    } else {
+      setShortAddress(`${address.slice(0, 6)}...${address.slice(-4)}`);
+    }
+  }, [dataUrl, address, connected]);
 
   return (
-    <header class="mb-auto">
-      <Navbar expand="lg" variant="dark">
+    <header className="mb-auto">
+      <Navbar expand="sm" variant="dark">
         <Container>
           <Navbar.Brand href="#">Disrupt Vaults</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse className="justify-content-end">
             <Navbar.Text>
-              <div>{}</div>
-              <Button onClick={() => connectWallet(web3Modal)}>Connect</Button>
+              <Button onClick={connected ? disconnectWallet : connectWallet}>
+                {connected ? (
+                  <>
+                    <canvas ref={canvasRef} style={{ display: 'none' }} />
+                    <img src={dataUrl} class="img-thumbnail" alt="address"></img>
+                    {/*<Avatar
+                alt="address"
+                src={dataUrl}
+                style={{
+                  width: '24px',
+                  height: '24px',
+                  marginRight: '4px',
+                }}
+              />*/}
+                    {shortAddress}
+                  </>
+                ) : (
+                  <>{'Connect'}</>
+                )}
+              </Button>
             </Navbar.Text>
           </Navbar.Collapse>
         </Container>

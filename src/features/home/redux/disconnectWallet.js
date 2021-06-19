@@ -1,9 +1,10 @@
 import { useCallback } from 'react';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import {
   HOME_DISCONNECT_WALLET_BEGIN,
   HOME_DISCONNECT_WALLET_SUCCESS,
   HOME_DISCONNECT_WALLET_FAILURE,
-} from 'constants/constants';
+} from './constants';
 
 export function disconnectWallet(web3, web3Modal) {
   return (dispatch) => {
@@ -26,16 +27,10 @@ export function disconnectWallet(web3, web3Modal) {
   };
 }
 
-/*export function useDisconnectWallet() {
+export function useDisconnectWallet() {
   const dispatch = useDispatch();
-  const disconnectWalletPending = useSelector(
-    state => state.home.disconnectWalletPending,
-    shallowEqual
-  );
-  const boundAction = useCallback(
-    (web3, web3Modal) => dispatch(disconnectWallet(web3, web3Modal)),
-    [dispatch]
-  );
+  const disconnectWalletPending = useSelector((state) => state.home.disconnectWalletPending, shallowEqual);
+  const boundAction = useCallback((web3, web3Modal) => dispatch(disconnectWallet(web3, web3Modal)), [dispatch]);
 
   return { disconnectWalletPending, disconnectWallet: boundAction };
 }
@@ -67,4 +62,4 @@ export function reducer(state, action) {
     default:
       return state;
   }
-}*/
+}
