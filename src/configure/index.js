@@ -6,18 +6,11 @@ const {
   avax: avaxAddressBook,
   bsc: bscAddressBook,
   testnet: testnetAddressBook,
-  fantom: fantomAddressBook
+  fantom: fantomAddressBook,
 } = addressBook;
 export { bscAddressBook, hecoAddressBook, avaxAddressBook, polygonAddressBook, fantomAddressBook, testnetAddressBook };
 
-export {
-  vaultABI,
-  erc20ABI,
-  strategyABI,
-  multicallABI,
-  uniswapV2PairABI,
-  uniswapV2RouterABI,
-} from './abi';
+export { vaultABI, erc20ABI, strategyABI, multicallABI, uniswapV2PairABI, uniswapV2RouterABI } from './abi';
 export { bscStakePools } from './stake/bsc_stake';
 export { testnetStakePools } from './stake/testnet_stake';
 export { hecoStakePools } from './stake/heco_stake';

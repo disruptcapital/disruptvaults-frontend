@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Provider } from 'react-redux';
 import store from './common/store';
 
-import 'bootstrap/scss/bootstrap.scss';
+import 'mdb-ui-kit/css/mdb.min.css';
+import 'mdb-ui-kit/js/mdb.min.js';
 import './App.scss';
 
 import { Vaults } from 'components/Vaults';
@@ -10,11 +11,14 @@ import { Header } from 'components/Header';
 import { createWeb3Modal } from 'web3/createWeb3Modal';
 import { useConnectWallet, useDisconnectWallet } from 'features/home/redux/hooks';
 import { networkSetup } from 'common/networkSetup';
+import useDarkMode from 'features/home/hooks/useDarkMode';
 
 const App = () => {
   const [web3Modal, setModal] = useState(null);
   const { connectWallet, web3, address, networkId, connected, connectWalletPending } = useConnectWallet();
   const { disconnectWallet } = useDisconnectWallet();
+  const { darkMode, setDarkMode } = useDarkMode();
+  //const theme = createTheme(darkMode);
 
   useEffect(() => {
     setModal(createWeb3Modal());
@@ -41,13 +45,15 @@ const App = () => {
     }
   }, [web3, address, networkId, connectWalletPending]);
   return (
-    <div id="app" className="h-100 text-light bg-dark">
-      <div className="container d-flex w-100 h-100 p-3 mx-auto flex-column">
+    <div id="app" className="h-100">
+      <div>
         <Header
           address={address}
           connected={connected}
           connectWallet={() => connectWallet(web3Modal)}
           disconnectWallet={() => disconnectWallet(web3, web3Modal)}
+          darkMode={darkMode}
+          setDarkMode={() => setDarkMode(!darkMode)}
         />
         <main className="px-3 text-center">
           <h2>Compounding...</h2>
