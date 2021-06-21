@@ -5,7 +5,7 @@ export const testnetPools = [
     name: 'Cake',
     token: 'CAKE',
     tokenDescription: 'Beefy.Finance',
-    tokenAddress: '0xCa3F508B8e4Dd382eE878A314789373D80A5190A',
+    tokenAddress: '0xCa3F508B8e4Dd382eE878A314789373D80A5190A', 
     tokenDecimals: 18,
     tokenDescriptionUrl: 'https://docs.beefy.finance/beefyfinance/products/bifi-maxi',
     earnedToken: 'mooBIFI',
