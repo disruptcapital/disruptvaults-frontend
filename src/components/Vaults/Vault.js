@@ -4,18 +4,34 @@ import Accordion from 'react-bootstrap/Accordion';
 import Card from 'react-bootstrap/Card';
 import { getNetworkPools } from 'common/getNetworkData';
 import { useConnectWallet } from 'features/home/redux/hooks';
-import { erc20ABI } from '../../configure/abi';
-
+import { erc20ABI, vaultABI } from '../../configure/abi';
+import BigNumber from 'bignumber.js';
 const Vault = (props) => {
   const { web3, address, networkId, connected, connectWalletPending } = useConnectWallet();
   const pool = props.pool;
+  const [currentBalance, setCurrentBalance] = useState(0);
 
   useEffect(async () => {
     if (!web3) return; 
 
-    // console.log(web3);
-    // var btdContract = new web3.eth.Contract(erc20ABI, '0xa28a2359b0e66234e6f7e0b6d9732f333d1008e2');
+    console.log(pool);
 
+    // console.log(web3);
+    var depositTokenContract = new web3.eth.Contract(erc20ABI, pool.depositTokenAddress);
+    var vaultContract = new web3.eth.Contract(vaultABI, pool.vaultAddress);
+
+    
+    depositTokenContract.methods.decimals().call().then(dec => {
+      depositTokenContract.methods.balanceOf(address).call().then((balance) => {
+          var decimalsBn = new BigNumber(dec);
+          var decimalDivisor = (new BigNumber(10)).pow(decimalsBn.toNumber());
+          var balanceBn = new BigNumber(balance);
+          var balance = balanceBn.div(decimalDivisor).toNumber();
+          setCurrentBalance(balance);
+      });
+
+
+    });
     // btdContract.methods.decimals().call().then(dec => {
     //   setDecimals(dec);
     //   console.log(dec);
@@ -49,14 +65,14 @@ const Vault = (props) => {
               <div class="row">
                 <div class="col-12">
                   Name: {pool.name} <br />
-                  Use: Your momma <br />
+                  Uses: Your momma <br />
                   decimals: {decimals} ( this is here just for contract testing )<br />
                   APR: 3,242,342% <br />
                   89 Daily: 0.99% <br />
                   TVL: A whole shit ton
                 </div>
                 <div class="col-6">
-                  Owned: 342332432 <br />
+                  Owned: {currentBalance} <br />
                 </div>
                 <div class="col-6">
                   Deposited: 4532543 <br />
