@@ -10,32 +10,49 @@ const Vault = (props) => {
   const { web3, address, networkId, connected, connectWalletPending } = useConnectWallet();
   const pool = props.pool;
   const [currentBalance, setCurrentBalance] = useState(0);
+  const [depositedAmount, setDepositedAmount] = useState(0);
+  const [tvl, setTvl] = useState(0);
 
-  useEffect(async () => {
+  useEffect(() => {
     if (!web3) return; 
 
     console.log(pool);
 
-    // console.log(web3);
-    var depositTokenContract = new web3.eth.Contract(erc20ABI, pool.depositTokenAddress);
+    var depositTokenContract = new web3.eth.Contract(erc20ABI, pool.depositTokenAddress);    
     var vaultContract = new web3.eth.Contract(vaultABI, pool.vaultAddress);
 
-    
+    // Number of decimals for deposit token
     depositTokenContract.methods.decimals().call().then(dec => {
+      var decimalsBn = new BigNumber(dec);
+      var decimalDivisor = (new BigNumber(10)).pow(decimalsBn.toNumber());
+
       depositTokenContract.methods.balanceOf(address).call().then((balance) => {
-          var decimalsBn = new BigNumber(dec);
-          var decimalDivisor = (new BigNumber(10)).pow(decimalsBn.toNumber());
           var balanceBn = new BigNumber(balance);
-          var balance = balanceBn.div(decimalDivisor).toNumber();
+          var balance = balanceBn.dividedBy(decimalDivisor).toNumber();
           setCurrentBalance(balance);
       });
 
+      // Total supply of IOU tokens
+      vaultContract.methods.totalSupply().call().then((totalSupply) => {
+        var totalSupplyBn = new BigNumber(totalSupply);
+
+        // IOU tokens owned by user
+        vaultContract.methods.balanceOf(address).call().then((iouBalance) => {
+            var iouBalanceBn = new BigNumber(iouBalance);
+
+            // Number of deposit tokens inside the vault.
+            vaultContract.methods.balance().call().then((vaultBalance) => {
+                var vaultBalanceBn = new BigNumber(vaultBalance);
+                setTvl(vaultBalanceBn.dividedBy(decimalDivisor).toNumber())
+                setDepositedAmount(iouBalanceBn.dividedBy(totalSupplyBn).multipliedBy(vaultBalanceBn).dividedBy(decimalDivisor).toNumber());
+
+            });
+
+        });
 
     });
-    // btdContract.methods.decimals().call().then(dec => {
-    //   setDecimals(dec);
-    //   console.log(dec);
-    // });
+
+    });
  }, [web3]);
 
 
@@ -65,17 +82,16 @@ const Vault = (props) => {
               <div class="row">
                 <div class="col-12">
                   Name: {pool.name} <br />
-                  Uses: Your momma <br />
-                  decimals: {decimals} ( this is here just for contract testing )<br />
-                  APR: 3,242,342% <br />
-                  89 Daily: 0.99% <br />
-                  TVL: A whole shit ton
+                  Uses: {pool.tokenDescription} <br />
+                  APR: ???% <br />
+                  Daily: ???% <br />
+                  TVL: {tvl}
                 </div>
                 <div class="col-6">
                   Owned: {currentBalance} <br />
                 </div>
                 <div class="col-6">
-                  Deposited: 4532543 <br />
+                  Deposited: {depositedAmount} <br />
                 </div>
               </div>
             </Accordion.Toggle>
