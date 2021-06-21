@@ -56,7 +56,7 @@ export const getNetworkPools = () => {
     case '56':
       return bscPools;
     case '97':
-        return testnetPools;
+      return testnetPools;
     case '128':
       return hecoPools;
     case '43114':
@@ -75,7 +75,7 @@ export const getNetworkTokens = () => {
     case '56':
       return bscAddressBook.tokens;
     case '97':
-        return testnetAddressBook.tokens;
+      return testnetAddressBook.tokens;
     case '128':
       return hecoAddressBook.tokens;
     case '43114':
@@ -120,7 +120,7 @@ export const getNetworkZaps = () => {
     case '56':
       return bscZaps;
     case '97':
-        return testnetZaps;
+      return testnetZaps;
     case '128':
       return hecoZaps;
     case '43114':
@@ -139,7 +139,7 @@ export const getNetworkStakePools = () => {
     case '56':
       return bscStakePools;
     case '97':
-        return testnetStakePools;
+      return testnetStakePools;
     case '128':
       return hecoStakePools;
     case '43114':
@@ -171,10 +171,8 @@ export const getNetworkStables = () => {
         'IRON',
         'DOLLY',
       ];
-      case '97':
-        return [
-          'BUSD'          
-        ];
+    case '97':
+      return ['BUSD'];
     case '128':
       return ['USDT', 'HUSD'];
     case '43114':

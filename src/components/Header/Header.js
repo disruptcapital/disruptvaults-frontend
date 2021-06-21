@@ -1,12 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Container, Navbar, Button } from 'react-bootstrap';
 import { renderIcon } from '@download/blockies';
+import { DisruptVaultsIcon, SunIcon, LoggedOut, MoonIcon } from 'icons';
+import 'scss/_hamburger.scss';
 
 const Header = (props) => {
-  const { address, connected, connectWallet, disconnectWallet } = props;
+  const { address, connected, connectWallet, disconnectWallet, setDarkMode, darkMode } = props;
   const [dataUrl, setDataUrl] = useState(null);
   const canvasRef = useRef(null);
   const [shortAddress, setShortAddress] = useState('');
+
+  const [hamburgerActive, setHamburgerActive] = useState(false);
 
   useEffect(() => {
     if (!connected) {
@@ -27,37 +30,71 @@ const Header = (props) => {
   }, [dataUrl, address, connected]);
 
   return (
-    <header className="mb-auto">
-      <Navbar expand="sm" variant="dark">
-        <Container>
-          <Navbar.Brand href="#">Disrupt Vaults</Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse className="justify-content-end">
-            <Navbar.Text>
-              <Button onClick={connected ? disconnectWallet : connectWallet}>
-                {connected ? (
-                  <>
-                    <canvas ref={canvasRef} style={{ display: 'none' }} />
-                    <img src={dataUrl} class="img-thumbnail" alt="address"></img>
-                    {/*<Avatar
-                alt="address"
-                src={dataUrl}
-                style={{
-                  width: '24px',
-                  height: '24px',
-                  marginRight: '4px',
-                }}
-              />*/}
+    <header>
+      <nav className="navbar navbar-expand-lg navbar-light bg-light">
+        <div className="container-fluid">
+          <DisruptVaultsIcon />
+          <button
+            className={
+              hamburgerActive
+                ? 'navbar-toggler hamburger hamburger--spin is-active'
+                : 'navbar-toggler hamburger hamburger--spin'
+            }
+            type="button"
+            data-mdb-toggle="collapse"
+            data-mdb-target="#menuContent"
+            aria-controls="menuContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+            onClick={() => setHamburgerActive(!hamburgerActive)}
+          >
+            <span class="hamburger-box">
+              <span class="hamburger-inner"></span>
+            </span>
+          </button>
+          <div class="collapse navbar-collapse" id="menuContent">
+            <ul class="navbar-nav d-flex flex-row align-items-center ms-auto">
+              {connected ? (
+                <li class="nav-item d-flex me-3">
+                  <span
+                    style={{
+                      marginRight: '10px',
+                      lineHeight: '32px',
+                    }}
+                  >
                     {shortAddress}
-                  </>
-                ) : (
-                  <>{'Connect'}</>
-                )}
-              </Button>
-            </Navbar.Text>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
+                  </span>
+                  <span>
+                    <canvas ref={canvasRef} style={{ display: 'none' }} />
+                    <img src={dataUrl} class="rounded-circle" alt="address"></img>
+                  </span>
+                </li>
+              ) : (
+                <li class="nav-item me-3">
+                  <LoggedOut />
+                </li>
+              )}
+              <li class="nav-item me-3">
+                <a href="#!" role="button" onClick={setDarkMode}>
+                  {darkMode ? <SunIcon /> : <MoonIcon />}
+                </a>
+              </li>
+              <li class="nav-item">
+                <button
+                  type="button"
+                  class="btn btn-primary btn-rounded"
+                  onClick={connected ? disconnectWallet : connectWallet}
+                  style={{
+                    minWidth: '130px',
+                  }}
+                >
+                  {connected ? <>{'Disconnect'}</> : <>{'Connect'}</>}
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
     </header>
   );
 };

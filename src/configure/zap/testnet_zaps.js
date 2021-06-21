@@ -1,3 +1,1 @@
-export const testnetZaps = [
-  
-];
+export const testnetZaps = [];
