@@ -11,14 +11,12 @@ import { Header } from 'components/Header';
 import { createWeb3Modal } from 'web3/createWeb3Modal';
 import { useConnectWallet, useDisconnectWallet } from 'features/home/redux/hooks';
 import { networkSetup } from 'common/networkSetup';
-import useDarkMode from 'features/home/hooks/useDarkMode';
+import { ThemeContextProvider } from 'contexts/ThemeContext';
 
 const App = () => {
   const [web3Modal, setModal] = useState(null);
   const { connectWallet, web3, address, networkId, connected, connectWalletPending } = useConnectWallet();
   const { disconnectWallet } = useDisconnectWallet();
-  const { darkMode, setDarkMode } = useDarkMode();
-  //const theme = createTheme(darkMode);
 
   useEffect(() => {
     setModal(createWeb3Modal());
@@ -52,8 +50,6 @@ const App = () => {
           connected={connected}
           connectWallet={() => connectWallet(web3Modal)}
           disconnectWallet={() => disconnectWallet(web3, web3Modal)}
-          darkMode={darkMode}
-          setDarkMode={() => setDarkMode(!darkMode)}
         />
         <main className="px-3 text-center">
           <h2>Compounding...</h2>
@@ -77,7 +73,9 @@ const App = () => {
 const AppWrapper = () => {
   return (
     <Provider store={store}>
-      <App />
+      <ThemeContextProvider>
+        <App />
+      </ThemeContextProvider>
     </Provider>
   );
 };

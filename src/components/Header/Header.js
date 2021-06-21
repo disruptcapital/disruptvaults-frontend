@@ -1,15 +1,16 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useContext } from 'react';
 import { renderIcon } from '@download/blockies';
 import { DisruptVaultsIcon, SunIcon, LoggedOut, MoonIcon } from 'icons';
+import useTheme from 'hooks/useTheme';
 import 'scss/_hamburger.scss';
 
 const Header = (props) => {
-  const { address, connected, connectWallet, disconnectWallet, setDarkMode, darkMode } = props;
+  const { address, connected, connectWallet, disconnectWallet } = props;
   const [dataUrl, setDataUrl] = useState(null);
   const canvasRef = useRef(null);
   const [shortAddress, setShortAddress] = useState('');
-
   const [hamburgerActive, setHamburgerActive] = useState(false);
+  const { theme = {}, isDarkMode, setIsDarkMode } = useTheme();
 
   useEffect(() => {
     if (!connected) {
@@ -31,9 +32,9 @@ const Header = (props) => {
 
   return (
     <header>
-      <nav className="navbar navbar-expand-lg navbar-light bg-light">
+      <nav className={`navbar navbar-expand-lg navbar-${theme.name} bg-${theme.name}`}>
         <div className="container-fluid">
-          <DisruptVaultsIcon />
+          <DisruptVaultsIcon color={theme.text} />
           <button
             className={
               hamburgerActive
@@ -75,8 +76,8 @@ const Header = (props) => {
                 </li>
               )}
               <li class="nav-item me-3">
-                <a href="#!" role="button" onClick={setDarkMode}>
-                  {darkMode ? <SunIcon /> : <MoonIcon />}
+                <a href="#!" role="button" onClick={() => setIsDarkMode(!isDarkMode)}>
+                  {isDarkMode ? <SunIcon /> : <MoonIcon />}
                 </a>
               </li>
               <li class="nav-item">

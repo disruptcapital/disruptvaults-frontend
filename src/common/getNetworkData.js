@@ -293,7 +293,7 @@ export const getNetworkConnectors = (t) => {
             display: {
               name: 'Binance',
               description: 'Binance Chain Wallet',
-              logo: require(`images/wallets/binance-wallet.png`),
+              logo: `${process.env.PUBLIC_URL}/images/wallets/binance-wallet.png`,
             },
             package: 'binance',
             connector: async (ProviderPackage, options) => {
@@ -306,7 +306,7 @@ export const getNetworkConnectors = (t) => {
             display: {
               name: 'Math',
               description: 'Math Wallet',
-              logo: require(`images/wallets/math-wallet.svg`),
+              logo: `${process.env.PUBLIC_URL}/images/wallets/math-wallet.svg`,
             },
             package: 'math',
             connector: connectors.injected,
@@ -315,7 +315,7 @@ export const getNetworkConnectors = (t) => {
             display: {
               name: 'Trust',
               description: 'Trust Wallet',
-              logo: require(`images/wallets/trust-wallet.svg`),
+              logo: `${process.env.PUBLIC_URL}/images/wallets/trust-wallet.svg`,
             },
             package: 'twt',
             connector: connectors.injected,
@@ -324,7 +324,7 @@ export const getNetworkConnectors = (t) => {
             display: {
               name: 'SafePal',
               description: 'SafePal App',
-              logo: require(`images/wallets/safepal-wallet.svg`),
+              logo: `${process.env.PUBLIC_URL}/images/wallets/safepal-wallet.svg`,
             },
             package: 'safepal',
             connector: connectors.injected,

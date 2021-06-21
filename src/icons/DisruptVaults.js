@@ -1,11 +1,7 @@
 import React from 'react';
 
-//<Svg viewBox="0 0 24 24" {...props}>
-
-const DisruptVaultsIcon = (props) => {
-  // from props.
-  const fill = '#4f4f4f';
-
+const DisruptVaultsIcon = ({ color }) => {
+  let fill = color || '#4F4F4F';
   return (
     <svg viewBox="0 0 419.98 86.55" width="200px">
       <path
