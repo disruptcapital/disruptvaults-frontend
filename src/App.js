@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Provider } from 'react-redux';
 import store from './common/store';
 
-import 'mdb-ui-kit/css/mdb.min.css';
-import 'mdb-ui-kit/js/mdb.min.js';
+import 'mdb-react-ui-kit/dist/css/mdb.min.css';
+import 'mdb-react-ui-kit/dist/mdb-react-ui-kit.js';
 import './App.scss';
 
 import { Vaults } from 'components/Vaults';

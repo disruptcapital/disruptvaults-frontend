@@ -11,15 +11,17 @@ const Vault = (props) => {
   const pool = props.pool;
   const [currentBalance, setCurrentBalance] = useState(0);
   const [depositedAmount, setDepositedAmount] = useState(0);
+  const [isAllowed, setIsAllowed] = useState(false);
+
   const [tvl, setTvl] = useState(0);
+
+
 
   useEffect(() => {
     if (!web3) return; 
 
-    console.log(pool);
-
-    var depositTokenContract = new web3.eth.Contract(erc20ABI, pool.depositTokenAddress);    
-    var vaultContract = new web3.eth.Contract(vaultABI, pool.vaultAddress);
+    const depositTokenContract = new web3.eth.Contract(erc20ABI, pool.depositTokenAddress);    
+    const vaultContract = new web3.eth.Contract(vaultABI, pool.vaultAddress);
 
     // Number of decimals for deposit token
     depositTokenContract.methods.decimals().call().then(dec => {
@@ -31,6 +33,13 @@ const Vault = (props) => {
           var balance = balanceBn.dividedBy(decimalDivisor).toNumber();
           setCurrentBalance(balance);
       });
+
+      // Getting token allowance status
+      depositTokenContract.methods.allowance(address, pool.vaultAddress).call().then((allowance) => {
+        var allowanceBn = new BigNumber(allowance);
+        
+        setIsAllowed(allowanceBn > 0);
+      })
 
       // Total supply of IOU tokens
       vaultContract.methods.totalSupply().call().then((totalSupply) => {
@@ -56,7 +65,6 @@ const Vault = (props) => {
  }, [web3]);
 
 
-  let [decimals, setDecimals] = useState(0);
 
   let deposit = () => {
     console.log('Deposit Clicked');
@@ -71,6 +79,10 @@ const Vault = (props) => {
   };
 
   let withdrawAll = () => {
+    console.log('WithdrawAll Clicked');
+  };
+
+  let approve = () => {
     console.log('WithdrawAll Clicked');
   };
 
@@ -99,26 +111,28 @@ const Vault = (props) => {
               <Card.Body className="text-black">
                 <div class="row">
                   <div class="col-6">
-                    <input type="number" class="form-control" placeholder="Deposit Amount"></input>
-                    <button class="btn btn-primary" onClick={deposit}>
+                    {!isAllowed && <div>
+                      <button class="btn btn-primary" onClick={approve}>
                       Approve
                     </button>{' '}
-                    ( Should only show when token has NOT been approved )<br />
-                    <button class="btn btn-primary" onClick={deposit}>
-                      Deposit
-                    </button>{' '}
-                    ( Should only show when token has been approved )<br />
-                    <button class="btn btn-secondary" onClick={depositAll}>
-                      Deposit All{' '}
-                    </button>
-                    ( Should only show when token has been approved )<br />
+                    </div>}
+                    {isAllowed && <div>
+                      <input type="number" class="form-control" placeholder="Deposit Amount"></input><br />
+                      <button class="btn btn-primary" onClick={deposit}>
+                        Deposit
+                      </button>{' '}
+                      <button class="btn btn-secondary" onClick={depositAll}>
+                        Deposit All{' '}
+                      </button>
+                    </div>}
+                    
                   </div>
                   <div class="col-6">
-                    <input type="number" class="form-control" placeholder="Withdraw Amount"></input>
-                    <button class="btn btn-primary" onClick={withdraw}>
+                    <input type="number" class="form-control" placeholder="Withdraw Amount" disabled={depositedAmount == 0}></input>
+                    <button class="btn btn-primary" onClick={withdraw} disabled={depositedAmount == 0}>
                       Withdraw
                     </button>
-                    <button class="btn btn-secondary" onClick={withdrawAll}>
+                    <button class="btn btn-secondary" onClick={withdrawAll} disabled={depositedAmount == 0}>
                       Withdraw All
                     </button>
                   </div>
