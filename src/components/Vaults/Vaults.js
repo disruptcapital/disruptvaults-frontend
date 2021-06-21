@@ -9,15 +9,26 @@ import {erc20ABI} from '../../configure/abi';
 const Vaults = (props) => {
   const { web3, address, networkId, connected, connectWalletPending }  = useConnectWallet();
   let pools = getNetworkPools();
-  
-    useEffect(() => {
-  //     console.log(web3);
-  //     var btdContract = new web3.eth.Contract(erc20ABI, '0xa28a2359b0e66234e6f7e0b6d9732f333d1008e2');
+  let data = [];
+    useEffect(async () => {
+      if (!web3) return; 
 
-  //     btdContract.methods.decimals().call().then(dec => {
-  //       setDecimals(dec);
-  //       console.log(dec);
-  //     });
+      data = pools.map(async (pool) => {
+        var btdContract = new web3.eth.Contract(erc20ABI, pool.tokenAddress);
+        var decimals = await btdContract.methods.decimals().call();
+
+        return {decimals, name: pool.name};
+      });
+
+
+
+      console.log(web3);
+      var btdContract = new web3.eth.Contract(erc20ABI, '0xa28a2359b0e66234e6f7e0b6d9732f333d1008e2');
+
+      btdContract.methods.decimals().call().then(dec => {
+        setDecimals(dec);
+        console.log(dec);
+      });
    }, [web3]);
 
   
@@ -43,7 +54,7 @@ const Vaults = (props) => {
 
   return (
     <Container className="text-dark text-left">
-      {pools.map(pool =>  (
+      {data.map(pool =>  (
       <Accordion className="vault">
         <Card>
           <Accordion.Toggle as={Card.Header} eventKey="1">            
