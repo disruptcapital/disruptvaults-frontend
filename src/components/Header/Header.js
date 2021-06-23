@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useContext } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { renderIcon } from '@download/blockies';
 import { DisruptVaultsIcon, SunIcon, LoggedOut, MoonIcon } from 'icons';
 import useTheme from 'hooks/useTheme';
@@ -32,7 +32,10 @@ const Header = (props) => {
 
   return (
     <header>
-      <nav className={`navbar navbar-expand-lg navbar-${theme.name} bg-${theme.name}`}>
+      <nav
+        className={`navbar fixed-top navbar-expand-lg bg-${theme.name} navbar-${theme.name}`}
+        style={{ zIndex: 2000, minHeight: '60px' }}
+      >
         <div className="container-fluid">
           <DisruptVaultsIcon color={theme.text} />
           <button
@@ -54,13 +57,14 @@ const Header = (props) => {
             </span>
           </button>
           <div class="collapse navbar-collapse" id="menuContent">
-            <ul class="navbar-nav d-flex flex-row align-items-center ms-auto">
+            <ul class="navbar-nav d-flex flex-row-lg align-items-lg-center align-items-sm-end ms-auto">
               {connected ? (
-                <li class="nav-item d-flex me-3">
+                <li class="nav-item me-lg-3 mb-lg-0 me-sm-2 mb-sm-2">
                   <span
                     style={{
                       marginRight: '10px',
                       lineHeight: '32px',
+                      color: `${theme.text}`,
                     }}
                   >
                     {shortAddress}
@@ -71,16 +75,16 @@ const Header = (props) => {
                   </span>
                 </li>
               ) : (
-                <li class="nav-item me-3">
+                <li class="nav-item me-lg-3 mb-lg-0 me-sm-2 mb-sm-2">
                   <LoggedOut />
                 </li>
               )}
-              <li class="nav-item me-3">
+              <li class="nav-item me-lg-3 mb-lg-0 me-sm-2 mb-sm-2">
                 <a href="#!" role="button" onClick={() => setIsDarkMode(!isDarkMode)}>
                   {isDarkMode ? <SunIcon /> : <MoonIcon />}
                 </a>
               </li>
-              <li class="nav-item">
+              <li class="nav-item me-sm-2">
                 <button
                   type="button"
                   class="btn btn-primary btn-rounded"
