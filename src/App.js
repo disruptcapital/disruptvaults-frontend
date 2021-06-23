@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Provider } from 'react-redux';
 import store from './common/store';
 
-import 'mdb-ui-kit/css/mdb.min.css';
-import 'mdb-ui-kit/js/mdb.min.js';
-//import 'mdb-react-ui-kit/dist/css/mdb.min.css';
-//import 'mdb-react-ui-kit/dist/mdb-react-ui-kit.js';
+//import 'mdb-ui-kit/css/mdb.min.css';
+//import 'mdb-ui-kit/js/mdb.min.js';
+import 'mdb-react-ui-kit/dist/css/mdb.min.css';
+import 'mdb-react-ui-kit/dist/mdb-react-ui-kit.js';
 import './App.scss';
 
 import { Vaults } from 'components/Vaults';
@@ -14,8 +14,6 @@ import { createWeb3Modal } from 'web3/createWeb3Modal';
 import { useConnectWallet, useDisconnectWallet } from 'features/home/redux/hooks';
 import { networkSetup } from 'common/networkSetup';
 import { ThemeContextProvider } from 'contexts/ThemeContext';
-//import backgroundLight from "images/light.jpg";
-//import backgroundDark from "images/dark.jpg";
 import useTheme from 'hooks/useTheme';
 import styled from 'styled-components';
 
