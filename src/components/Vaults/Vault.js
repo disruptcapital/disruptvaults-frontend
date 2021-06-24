@@ -83,7 +83,14 @@ const Vault = (props) => {
   };
 
   let approve = () => {
-    console.log('WithdrawAll Clicked');
+
+
+
+    const depositTokenContract = new web3.eth.Contract(erc20ABI, pool.depositTokenAddress);  
+    depositTokenContract.methods.approve(pool.vaultAddress, "115792089237316195423570985008687907853269984665640564039377283796003129639935").send({from: address}).then(() => {
+
+    });
+    
   };
 
 
