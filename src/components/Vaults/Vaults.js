@@ -8,19 +8,15 @@ import { erc20ABI } from '../../configure/abi';
 import Vault from './Vault';
 
 const Vaults = (props) => {
-  const { web3, address, networkId, connected, connectWalletPending }  = useConnectWallet();
+  const { web3, address, networkId, connected, connectWalletPending } = useConnectWallet();
   let pools = getNetworkPools();
   let data = [];
-   
-  
-  
-
 
   return (
     <Container className="text-dark text-left">
       {pools.map((pool) => (
         <>
-        <Vault pool={pool}></Vault>
+          <Vault pool={pool}></Vault>
         </>
       ))}
       ;

@@ -1,6 +1,7 @@
 const lightColors = {
   text: '#4F4F4F',
-  background: '#5F6368',
+  bg: '#FFFFFF',
+  bgSecondary: '#FFFFFF',
 };
 
 const light = {

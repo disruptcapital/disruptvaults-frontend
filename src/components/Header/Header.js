@@ -2,15 +2,28 @@ import React, { useEffect, useRef, useState } from 'react';
 import { renderIcon } from '@download/blockies';
 import { DisruptVaultsIcon, SunIcon, LoggedOut, MoonIcon } from 'icons';
 import useTheme from 'hooks/useTheme';
+import usePrevious from 'hooks/usePrevious';
 import 'scss/_hamburger.scss';
+import styled from 'styled-components';
+import {
+  MDBContainer,
+  MDBNavbar,
+  MDBNavbarBrand,
+  MDBNavbarToggler,
+  MDBNavbarNav,
+  MDBNavbarItem,
+  MDBNavbarLink,
+  MDBCollapse,
+} from 'mdb-react-ui-kit';
 
 const Header = (props) => {
   const { address, connected, connectWallet, disconnectWallet } = props;
   const [dataUrl, setDataUrl] = useState(null);
   const canvasRef = useRef(null);
+  const [showNav, setShowNav] = useState(false);
   const [shortAddress, setShortAddress] = useState('');
-  const [hamburgerActive, setHamburgerActive] = useState(false);
   const { theme = {}, isDarkMode, setIsDarkMode } = useTheme();
+  const prevTheme = usePrevious(theme.name);
 
   useEffect(() => {
     if (!connected) {
@@ -30,36 +43,44 @@ const Header = (props) => {
     }
   }, [dataUrl, address, connected]);
 
+  const StyledNav = styled(MDBNavbar)`
+    min-height: 56px;
+    z-index: 2000;
+    background-color: ${({ theme }) => theme.bgSecondary};
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: ${({ theme }) => theme.text};
+  `;
+
+  const StyledCollapse = styled(MDBCollapse)`
+    ${prevTheme !== theme.name && 'transition: none;'}
+  `;
+
   return (
     <header>
-      <nav
-        className={`navbar fixed-top navbar-expand-lg bg-${theme.name} navbar-${theme.name}`}
-        style={{ zIndex: 2000, minHeight: '60px' }}
-      >
-        <div className="container-fluid">
-          <DisruptVaultsIcon color={theme.text} />
-          <button
+      <StyledNav expand="lg" fixed>
+        <MDBContainer fluid>
+          <MDBNavbarBrand href="#">
+            <DisruptVaultsIcon color={theme.text} />
+          </MDBNavbarBrand>
+          <MDBNavbarToggler
+            type="button"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+            onClick={() => setShowNav(!showNav)}
             className={
-              hamburgerActive
+              showNav
                 ? 'navbar-toggler hamburger hamburger--spin is-active'
                 : 'navbar-toggler hamburger hamburger--spin'
             }
-            type="button"
-            data-mdb-toggle="collapse"
-            data-mdb-target="#menuContent"
-            aria-controls="menuContent"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-            onClick={() => setHamburgerActive(!hamburgerActive)}
           >
             <span class="hamburger-box">
               <span class="hamburger-inner"></span>
             </span>
-          </button>
-          <div class="collapse navbar-collapse" id="menuContent">
-            <ul class="navbar-nav d-flex flex-row-lg align-items-lg-center align-items-sm-end ms-auto">
+          </MDBNavbarToggler>
+          <StyledCollapse navbar show={showNav}>
+            <MDBNavbarNav right fullWidth={false} className="align-items-lg-center align-items-sm-end ms-auto">
               {connected ? (
-                <li class="nav-item me-lg-3 mb-lg-0 me-sm-2 mb-sm-2">
+                <MDBNavbarItem className="me-lg-3 mb-lg-0 me-sm-2 mb-sm-2">
                   <span
                     style={{
                       marginRight: '10px',
@@ -71,23 +92,23 @@ const Header = (props) => {
                   </span>
                   <span>
                     <canvas ref={canvasRef} style={{ display: 'none' }} />
-                    <img src={dataUrl} class="rounded-circle" alt="address"></img>
+                    <img src={dataUrl} className="rounded-circle" alt="address"></img>
                   </span>
-                </li>
+                </MDBNavbarItem>
               ) : (
-                <li class="nav-item me-lg-3 mb-lg-0 me-sm-2 mb-sm-2">
+                <MDBNavbarItem className="me-lg-3 mb-lg-0 me-sm-2 mb-sm-2">
                   <LoggedOut />
-                </li>
+                </MDBNavbarItem>
               )}
-              <li class="nav-item me-lg-3 mb-lg-0 me-sm-2 mb-sm-2">
+              <MDBNavbarItem className="me-lg-3 mb-lg-0 me-sm-2 mb-sm-2">
                 <a href="#!" role="button" onClick={() => setIsDarkMode(!isDarkMode)}>
                   {isDarkMode ? <SunIcon /> : <MoonIcon />}
                 </a>
-              </li>
-              <li class="nav-item me-sm-2">
+              </MDBNavbarItem>
+              <MDBNavbarItem className="me-sm-2">
                 <button
                   type="button"
-                  class="btn btn-primary btn-rounded"
+                  className="btn btn-primary btn-rounded"
                   onClick={connected ? disconnectWallet : connectWallet}
                   style={{
                     minWidth: '130px',
@@ -95,11 +116,11 @@ const Header = (props) => {
                 >
                   {connected ? <>{'Disconnect'}</> : <>{'Connect'}</>}
                 </button>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
+              </MDBNavbarItem>
+            </MDBNavbarNav>
+          </StyledCollapse>
+        </MDBContainer>
+      </StyledNav>
     </header>
   );
 };

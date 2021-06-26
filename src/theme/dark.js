@@ -1,6 +1,7 @@
 const darkColors = {
   text: '#E8EAED',
-  background: '#5F6368',
+  bg: '#202124',
+  bgSecondary: '#292a2d',
 };
 
 const dark = {
