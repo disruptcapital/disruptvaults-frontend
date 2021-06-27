@@ -22,7 +22,10 @@ const Vault = (props) => {
 
   const [currentBalance, setCurrentBalance] = useState(0);
   const [depositedAmount, setDepositedAmount] = useState(0);
+  const [amountToDeposit, setAmountToDeposit] = useState(0);
+  const [amountToWithdraw, setAmountToWithdraw] = useState(0);
   const [isAllowed, setIsAllowed] = useState(false);
+  const [decimalDivisor, setDecimalDivisor] = useState(new BigNumber(10).pow(18));
   const [tvl, setTvl] = useState(0);
 
   useEffect(() => {
@@ -37,7 +40,7 @@ const Vault = (props) => {
       .call()
       .then((dec) => {
         var decimalsBn = new BigNumber(dec);
-        var decimalDivisor = new BigNumber(10).pow(decimalsBn.toNumber());
+        setDecimalDivisor(new BigNumber(10).pow(decimalsBn.toNumber()));
 
         depositTokenContract.methods
           .balanceOf(address)
@@ -92,16 +95,23 @@ const Vault = (props) => {
       });
   }, [web3]);
 
-  const deposit = () => {
-    console.log('Deposit Clicked');
+  let deposit = () => {
+    
+    const vaultContract = new web3.eth.Contract(vaultABI, pool.vaultAddress); 
+    vaultContract.methods.deposit(decimalDivisor.multipliedBy(amountToDeposit).toString()).send({from: address}).then(() => {
+
+    });
   };
 
   const depositAll = () => {
     console.log('depositAll Clicked');
   };
 
-  const withdraw = () => {
-    console.log('Withdraw Clicked');
+  let withdraw = () => {
+    const vaultContract = new web3.eth.Contract(vaultABI, pool.vaultAddress); 
+    vaultContract.methods.withdraw(decimalDivisor.multipliedBy(amountToWithdraw).toString()).send({from: address}).then(() => {
+
+    });
   };
 
   const withdrawAll = () => {
@@ -157,7 +167,7 @@ const Vault = (props) => {
         </MDBTabs>
         <MDBTabsContent>
           <MDBTabsPane show={basicActive === 'deposit'}>
-            {isAllowed && <StyledMDBInput label="Deposit Amount" type="number" className="mb-3" />}
+            {isAllowed && <StyledMDBInput label="Deposit Amount" type="number" className="mb-3" value={amountToDeposit} onChange={(e) => setAmountToDeposit(e.target.value)}/>}
             <StyledDescription>
               Deposit fee: 0.0%
               <br />
@@ -171,7 +181,8 @@ const Vault = (props) => {
           </MDBTabsPane>
           <MDBTabsPane show={basicActive === 'withdrawal'}>
             {isAllowed && (
-              <StyledMDBInput label="Withdraw Amount" type="number" disabled={depositedAmount == 0} className="mb-3" />
+              <StyledMDBInput label="Withdraw Amount" type="number" disabled={depositedAmount == 0} className="mb-3" value={amountToWithdraw}
+              onChange={(e) => setAmountToWithdraw(e.target.value)}/>
             )}
             <StyledDescription>Withdrawal will result in: </StyledDescription>
             <StyledDescriptionSmall>Redeem moo1INCH1INCH token for 1INCH</StyledDescriptionSmall>
