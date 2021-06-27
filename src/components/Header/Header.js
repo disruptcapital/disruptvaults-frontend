@@ -12,7 +12,6 @@ import {
   MDBNavbarToggler,
   MDBNavbarNav,
   MDBNavbarItem,
-  MDBNavbarLink,
   MDBCollapse,
 } from 'mdb-react-ui-kit';
 
@@ -43,14 +42,6 @@ const Header = (props) => {
     }
   }, [dataUrl, address, connected]);
 
-  const StyledNav = styled(MDBNavbar)`
-    min-height: 56px;
-    z-index: 2000;
-    background-color: ${({ theme }) => theme.bgSecondary};
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    color: ${({ theme }) => theme.text};
-  `;
-
   const StyledCollapse = styled(MDBCollapse)`
     ${prevTheme !== theme.name && 'transition: none;'}
   `;
@@ -58,7 +49,7 @@ const Header = (props) => {
   return (
     <header>
       <StyledNav expand="lg" fixed>
-        <MDBContainer fluid>
+        <MDBContainer>
           <MDBNavbarBrand href="#">
             <DisruptVaultsIcon color={theme.text} />
           </MDBNavbarBrand>
@@ -78,9 +69,9 @@ const Header = (props) => {
             </span>
           </MDBNavbarToggler>
           <StyledCollapse navbar show={showNav}>
-            <MDBNavbarNav right fullWidth={false} className="align-items-lg-center align-items-sm-end ms-auto">
+            <MDBNavbarNav right fullWidth={false} className="align-items-lg-center align-items-end ms-auto">
               {connected ? (
-                <MDBNavbarItem className="me-lg-3 mb-lg-0 me-sm-2 mb-sm-2">
+                <MDBNavbarItem className="me-lg-3 mb-lg-0 me-2 mb-2">
                   <span
                     style={{
                       marginRight: '10px',
@@ -96,16 +87,16 @@ const Header = (props) => {
                   </span>
                 </MDBNavbarItem>
               ) : (
-                <MDBNavbarItem className="me-lg-3 mb-lg-0 me-sm-2 mb-sm-2">
+                <MDBNavbarItem className="me-lg-3 mb-lg-0 me-2 mb-2">
                   <LoggedOut />
                 </MDBNavbarItem>
               )}
-              <MDBNavbarItem className="me-lg-3 mb-lg-0 me-sm-2 mb-sm-2">
+              <MDBNavbarItem className="me-lg-3 mb-lg-0 me-2 mb-2">
                 <a href="#!" role="button" onClick={() => setIsDarkMode(!isDarkMode)}>
                   {isDarkMode ? <SunIcon /> : <MoonIcon />}
                 </a>
               </MDBNavbarItem>
-              <MDBNavbarItem className="me-sm-2">
+              <MDBNavbarItem className="me-2">
                 <button
                   type="button"
                   className="btn btn-primary btn-rounded"
@@ -124,5 +115,13 @@ const Header = (props) => {
     </header>
   );
 };
+
+const StyledNav = styled(MDBNavbar)`
+  min-height: 56px;
+  z-index: 2000;
+  background-color: ${({ theme }) => theme.bgSecondary};
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: ${({ theme }) => theme.text};
+`;
 
 export default Header;

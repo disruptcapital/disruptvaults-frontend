@@ -205,7 +205,7 @@ export const getNetworkMulticall = () => {
   }
 };
 
-export const getNetworkConnectors = (t) => {
+export const getNetworkConnectors = () => {
   switch (process.env.REACT_APP_NETWORK_ID) {
     case '56':
       return {

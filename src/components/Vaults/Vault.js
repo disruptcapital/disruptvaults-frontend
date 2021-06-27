@@ -1,18 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { Container } from 'react-bootstrap';
-import Accordion from 'react-bootstrap/Accordion';
-import Card from 'react-bootstrap/Card';
-import { getNetworkPools } from 'common/getNetworkData';
 import { useConnectWallet } from 'features/home/redux/hooks';
 import { erc20ABI, vaultABI } from '../../configure/abi';
 import BigNumber from 'bignumber.js';
+import {
+  MDBCard,
+  MDBCardImage,
+  MDBCardBody,
+  MDBBtn,
+  MDBTabs,
+  MDBTabsItem,
+  MDBTabsLink,
+  MDBTabsContent,
+  MDBTabsPane,
+  MDBInput,
+} from 'mdb-react-ui-kit';
+import styled from 'styled-components';
+
 const Vault = (props) => {
   const { web3, address, networkId, connected, connectWalletPending } = useConnectWallet();
-  const pool = props.pool;
+  const { pool } = props;
+
   const [currentBalance, setCurrentBalance] = useState(0);
   const [depositedAmount, setDepositedAmount] = useState(0);
   const [isAllowed, setIsAllowed] = useState(false);
-
   const [tvl, setTvl] = useState(0);
 
   useEffect(() => {
@@ -82,111 +92,188 @@ const Vault = (props) => {
       });
   }, [web3]);
 
-  let deposit = () => {
+  const deposit = () => {
     console.log('Deposit Clicked');
   };
 
-  let depositAll = () => {
+  const depositAll = () => {
     console.log('depositAll Clicked');
   };
 
-  let withdraw = () => {
+  const withdraw = () => {
     console.log('Withdraw Clicked');
   };
 
-  let withdrawAll = () => {
+  const withdrawAll = () => {
     console.log('WithdrawAll Clicked');
   };
 
-  let approve = () => {
+  const approve = () => {
+    const depositTokenContract = new web3.eth.Contract(erc20ABI, pool.depositTokenAddress);
+    depositTokenContract.methods
+      .approve(pool.vaultAddress, '115792089237316195423570985008687907853269984665640564039377283796003129639935')
+      .send({ from: address })
+      .then(() => {});
+  };
 
+  const [basicActive, setBasicActive] = useState('deposit');
 
+  const handleBasicClick = (value) => {
+    if (value === basicActive) {
+      return;
+    }
 
-    const depositTokenContract = new web3.eth.Contract(erc20ABI, pool.depositTokenAddress);  
-    depositTokenContract.methods.approve(pool.vaultAddress, "115792089237316195423570985008687907853269984665640564039377283796003129639935").send({from: address}).then(() => {
-
-    });
-    
+    setBasicActive(value);
   };
 
   return (
-    <Accordion className="vault">
-      <Card>
-        <Accordion.Toggle as={Card.Header} eventKey="1">
-          <div class="row">
-            <div class="col-12">
-              Name: {pool.name} <br />
-              Uses: {pool.tokenDescription} <br />
-              APR: ???% <br />
-              Daily: ???% <br />
-              TVL: {tvl}
-            </div>
-            <div class="col-6">
-              Owned: {currentBalance} <br />
-            </div>
-            <div class="col-6">
-              Deposited: {depositedAmount} <br />
-            </div>
+    <StyledCard>
+      <StyledVaultHeader>
+        <div className="m-2">
+          <StyledCardImage
+            className="img-fluid"
+            overlay="white-light"
+            hover
+            src={`${process.env.PUBLIC_URL}/${pool.logo}`}
+          />
+        </div>
+        <div>
+          <h5 className="mt-2 mb-0 font-weight-bold">{pool.name}</h5>
+          <StyledParagraphSmall className="font-weight-light">Uses: {pool.tokenDescription}</StyledParagraphSmall>
+        </div>
+      </StyledVaultHeader>
+      <MDBCardBody>
+        <MDBTabs fill className="mb-3">
+          <MDBTabsItem>
+            <StyledTabsLink onClick={() => handleBasicClick('deposit')} active={basicActive === 'deposit'}>
+              Deposit
+            </StyledTabsLink>
+          </MDBTabsItem>
+          <MDBTabsItem>
+            <StyledTabsLink onClick={() => handleBasicClick('withdrawal')} active={basicActive === 'withdrawal'}>
+              Withdrawal
+            </StyledTabsLink>
+          </MDBTabsItem>
+        </MDBTabs>
+        <MDBTabsContent>
+          <MDBTabsPane show={basicActive === 'deposit'}>
+            {isAllowed && <StyledMDBInput label="Deposit Amount" type="number" className="mb-3" />}
+            <StyledDescription>
+              Deposit fee: 0.0%
+              <br />
+              Withdrawal fee: 0.0%
+            </StyledDescription>
+            <StyledDescriptionSmall>
+              You will receive mooCakeV2RABBIT-WBNB token as a receipt for your deposited RABBIT-BNB LP assets. This
+              token is needed to withdraw your RABBIT-BNB LP, do not trade or transfer mooCakeV2RABBIT-WBNB to
+              strangers!
+            </StyledDescriptionSmall>
+          </MDBTabsPane>
+          <MDBTabsPane show={basicActive === 'withdrawal'}>
+            {isAllowed && (
+              <StyledMDBInput label="Withdraw Amount" type="number" disabled={depositedAmount == 0} className="mb-3" />
+            )}
+            <StyledDescription>Withdrawal will result in: </StyledDescription>
+            <StyledDescriptionSmall>Redeem moo1INCH1INCH token for 1INCH</StyledDescriptionSmall>
+          </MDBTabsPane>
+        </MDBTabsContent>
+      </MDBCardBody>
+      <div>
+        {basicActive === 'deposit' && !isAllowed && (
+          <div class="d-flex">
+            {isAllowed ? (
+              <>
+                <StyledButton onClick={deposit}>Deposit</StyledButton>
+                <StyledButton onClick={depositAll}>Deposit All</StyledButton>
+              </>
+            ) : (
+              <StyledButton onClick={approve}>Approve</StyledButton>
+            )}
           </div>
-        </Accordion.Toggle>
-        <Accordion.Collapse eventKey="1">
-          <Card.Body className="text-black">
-            <div class="row">
-              <div class="col-6">
-                {!isAllowed && (
-                  <div>
-                    <button class="btn btn-primary" onClick={approve}>
-                      Approve
-                    </button>{' '}
-                  </div>
-                )}
-                {isAllowed && (
-                  <div>
-                    <input type="number" class="form-control" placeholder="Deposit Amount"></input>
-                    <br />
-                    <button class="btn btn-primary" onClick={deposit}>
-                      Deposit
-                    </button>{' '}
-                    <button class="btn btn-secondary" onClick={depositAll}>
-                      Deposit All{' '}
-                    </button>
-                  </div>
-                )}
-              </div>
-              <div class="col-6">
-                <input
-                  type="number"
-                  class="form-control"
-                  placeholder="Withdraw Amount"
-                  disabled={depositedAmount == 0}
-                ></input>
-                <button class="btn btn-primary" onClick={withdraw} disabled={depositedAmount == 0}>
-                  Withdraw
-                </button>
-                <button class="btn btn-secondary" onClick={withdrawAll} disabled={depositedAmount == 0}>
-                  Withdraw All
-                </button>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-6">
-                <p>
-                  Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
-                  industry's st
-                </p>
-              </div>
-              <div class="col-6">
-                <p>
-                  Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
-                  industry's standa
-                </p>
-              </div>
-            </div>
-          </Card.Body>
-        </Accordion.Collapse>
-      </Card>
-    </Accordion>
+        )}
+        {basicActive === 'withdrawal' && (
+          <div class="d-flex">
+            <StyledButton onClick={withdraw} disabled={depositedAmount == 0}>
+              Withdraw
+            </StyledButton>
+            <StyledButton onClick={withdrawAll} disabled={depositedAmount == 0}>
+              Withdraw All
+            </StyledButton>
+          </div>
+        )}
+      </div>
+    </StyledCard>
   );
 };
+
+const StyledCard = styled(MDBCard)`
+  width: 100%;
+  margin: 5px;
+  border-radius: 0;
+  background: ${({ theme }) => theme.bgSecondary};
+
+  ${({ theme }) => theme.mediaQueries.md} {
+    width: 48%;
+  }
+
+  ${({ theme }) => theme.mediaQueries.lg} {
+    width: 32%;
+  }
+`;
+const StyledCardImage = styled(MDBCardImage)`
+  max-width: 83px;
+`;
+const StyledParagraphSmall = styled.p`
+  font-size: 12px;
+  color: ${({ theme }) => theme.text};
+`;
+
+const StyledVaultHeader = styled.div`
+  display: flex !important;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 12px 0 rgb(0 0 0 / 7%), 0 2px 4px rgb(0 0 0 / 5%);
+`;
+
+const StyledDescription = styled.div`
+  color: ${({ theme }) => theme.disabled};
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 1.5rem;
+`;
+
+const StyledDescriptionSmall = styled.div`
+  color: ${({ theme }) => theme.disabled};
+  font-size: 12px;
+  text-align: center;
+  margin-bottom: 1.5rem;
+`;
+
+const StyledButton = styled(MDBBtn)`
+  width: 100%;
+  border-radius: 0;
+  box-shadow: none;
+  margin: 1px;
+`;
+
+const StyledTabsLink = styled(MDBTabsLink)`
+  &.nav-link {
+    color: ${({ theme }) => `${theme.text}`};
+
+    &.active {
+      background-color: transparent;
+    }
+    &:hover {
+      background-color: ${({ theme }) => `${theme.bg} !important`};
+    }
+  }
+`;
+
+const StyledMDBInput = styled(MDBInput)`
+  &.form-control ~ .form-label {
+    color: ${({ theme }) => `${theme.text}`};
+  }
+`;
 
 export default Vault;

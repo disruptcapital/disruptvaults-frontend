@@ -1,6 +1,19 @@
-/*html, body, #root {
-  height: 100% !important
+.btn-primary {
+  background: #17bf63;
+  border: 1px solid;
+  border-color: #17bf63;
+
+  &:active,
+  &:focus,
+  &:hover {
+    background-color: darken(#17bf63, 10%);
+    border-color: darken(#17bf63, 15%);
+  }
+
+  &:disabled {
+    color: rgba(32, 33, 36, 0.6);
+    background-color: #cdcdcd !important;
+    border-color: darken(#cdcdcd, 10%);
+    box-shadow: none;
+  }
 }
-.vault {
-  margin-bottom: 20px;
-}*/
