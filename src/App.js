@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Provider } from 'react-redux';
 import store from './common/store';
 
-import 'mdb-ui-kit/css/mdb.min.css';
+import 'mdb-react-ui-kit/dist/css/mdb.min.css';
 import './App.scss';
 
 import { Vaults } from 'components/Vaults';

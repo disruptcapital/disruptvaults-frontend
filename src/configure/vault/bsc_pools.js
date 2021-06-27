@@ -10,7 +10,7 @@ export const bscPools = [
     tokenDescriptionUrl: '#',
     earnedToken: 'DISRUPTED_TUSK_BNB',
     earnedTokenAddress: '0x1A595f3C87eD421F338Ee78460c2440af6831c07',
-    vaultAddress: '0x1A595f3C87eD421F338Ee78460c2440af6831c07',
+    vaultAddress: '0xEa68135A7b508b3c2252Bcb52605257bCdaD9646',
     pricePerFullShare: 1,
     tvl: 0,
     oracle: 'lps',

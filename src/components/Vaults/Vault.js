@@ -11,8 +11,10 @@ const Vault = (props) => {
   const pool = props.pool;
   const [currentBalance, setCurrentBalance] = useState(0);
   const [depositedAmount, setDepositedAmount] = useState(0);
+  const [amountToDeposit, setAmountToDeposit] = useState(0);
+  const [amountToWithdraw, setAmountToWithdraw] = useState(0);
   const [isAllowed, setIsAllowed] = useState(false);
-
+  const [decimalDivisor, setDecimalDivisor] = useState(new BigNumber(10).pow(18));
   const [tvl, setTvl] = useState(0);
 
   useEffect(() => {
@@ -27,7 +29,7 @@ const Vault = (props) => {
       .call()
       .then((dec) => {
         var decimalsBn = new BigNumber(dec);
-        var decimalDivisor = new BigNumber(10).pow(decimalsBn.toNumber());
+        setDecimalDivisor(new BigNumber(10).pow(decimalsBn.toNumber()));
 
         depositTokenContract.methods
           .balanceOf(address)
@@ -83,7 +85,12 @@ const Vault = (props) => {
   }, [web3]);
 
   let deposit = () => {
-    console.log('Deposit Clicked');
+    
+
+    const vaultContract = new web3.eth.Contract(vaultABI, pool.vaultAddress); 
+    vaultContract.methods.deposit(decimalDivisor.multipliedBy(amountToDeposit)).send({from: address}).then(() => {
+
+    });
   };
 
   let depositAll = () => {
@@ -91,7 +98,10 @@ const Vault = (props) => {
   };
 
   let withdraw = () => {
-    console.log('Withdraw Clicked');
+    const vaultContract = new web3.eth.Contract(vaultABI, pool.vaultAddress); 
+    vaultContract.methods.withdraw(decimalDivisor.multipliedBy(amountToWithdraw)).send({from: address}).then(() => {
+
+    });
   };
 
   let withdrawAll = () => {
@@ -142,7 +152,7 @@ const Vault = (props) => {
                 )}
                 {isAllowed && (
                   <div>
-                    <input type="number" class="form-control" placeholder="Deposit Amount"></input>
+                    <input type="number" class="form-control" placeholder="Deposit Amount" value={amountToDeposit} onChange={(e) => setAmountToDeposit(e.target.value)}></input>
                     <br />
                     <button class="btn btn-primary" onClick={deposit}>
                       Deposit
@@ -158,6 +168,8 @@ const Vault = (props) => {
                   type="number"
                   class="form-control"
                   placeholder="Withdraw Amount"
+                  value={amountToWithdraw}
+                  onChange={(e) => setAmountToWithdraw(e.target.value)}
                   disabled={depositedAmount == 0}
                 ></input>
                 <button class="btn btn-primary" onClick={withdraw} disabled={depositedAmount == 0}>
