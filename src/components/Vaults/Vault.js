@@ -232,7 +232,8 @@ const StyledCard = styled(MDBCard)`
   }
 `;
 const StyledCardImage = styled(MDBCardImage)`
-  max-width: 83px;
+  width: 80px;
+  height: 80px;
 `;
 const StyledParagraphSmall = styled.p`
   font-size: 12px;

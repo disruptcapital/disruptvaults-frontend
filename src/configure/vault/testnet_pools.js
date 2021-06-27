@@ -1,10 +1,10 @@
 export const testnetPools = [
   {
-    id: 'CAKE',
-    logo: 'single-assets/CAKE.png',
-    name: 'Cake',
-    token: 'CAKE',
-    tokenDescription: 'Beefy.Finance',
+    id: 'fake-TUSK_BNB',
+    logo: 'images/bnb-pairs/TUSK-BNB.svg',
+    name: 'TUSK-BNB LP',
+    token: 'TUSK-BNB LP',
+    tokenDescription: 'Pancake (Blizzard)',
     depositTokenAddress: '0xCa3F508B8e4Dd382eE878A314789373D80A5190A',
     tokenDecimals: 18,
     tokenDescriptionUrl: 'https://docs.beefy.finance/beefyfinance/products/bifi-maxi',
@@ -25,7 +25,7 @@ export const testnetPools = [
   },
   {
     id: 'CAKE',
-    logo: 'single-assets/CAKE.png',
+    logo: 'images/single-assets/CAKE.svg',
     name: 'Cake',
     token: 'CAKE',
     tokenDescription: 'Beefy.Finance',
