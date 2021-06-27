@@ -86,9 +86,6 @@ const Vault = (props) => {
 
   let deposit = () => {
     
-    console.log(amountToDeposit);
-    console.log(decimalDivisor.toString());
-    console.log(decimalDivisor.multipliedBy(amountToDeposit).toString())
     const vaultContract = new web3.eth.Contract(vaultABI, pool.vaultAddress); 
     vaultContract.methods.deposit(decimalDivisor.multipliedBy(amountToDeposit).toString()).send({from: address}).then(() => {
 
@@ -101,7 +98,7 @@ const Vault = (props) => {
 
   let withdraw = () => {
     const vaultContract = new web3.eth.Contract(vaultABI, pool.vaultAddress); 
-    vaultContract.methods.withdraw(decimalDivisor.multipliedBy(amountToWithdraw)).send({from: address}).then(() => {
+    vaultContract.methods.withdraw(decimalDivisor.multipliedBy(amountToWithdraw).toString()).send({from: address}).then(() => {
 
     });
   };
