@@ -47,8 +47,8 @@ const Vault = (props) => {
           .call()
           .then((balance) => {
             var balanceBn = new BigNumber(balance);
-            var balance = balanceBn.dividedBy(decimalDivisor).toNumber();
-            setCurrentBalance(balance);
+            const formattedBalance = balanceBn.dividedBy(decimalDivisor).toNumber();
+            setCurrentBalance(formattedBalance);
           });
 
         // Getting token allowance status
@@ -147,12 +147,21 @@ const Vault = (props) => {
             src={`${process.env.PUBLIC_URL}/${pool.logo}`}
           />
         </div>
-        <div>
+        <div style={{flexGrow: '1'}}>
           <h5 className="mt-2 mb-0 font-weight-bold">{pool.name}</h5>
           <StyledParagraphSmall className="font-weight-light">Uses: {pool.tokenDescription}</StyledParagraphSmall>
+          <div class="d-flex justify-content-evenly">
+          <div class="text-center"><div>999.99%</div><div>APY</div></div>
+          <div class="text-center"><div>999.99%</div><div>Daily</div></div>
+          <div class="text-center"><div>{tvl}%</div><div>TVL</div></div>
+          
         </div>
+        </div>
+        
       </StyledVaultHeader>
       <MDBCardBody>
+          <div>{`Owned: ${currentBalance}`}</div>
+          <div>Deposited: {depositedAmount}</div>
         <MDBTabs fill className="mb-3">
           <MDBTabsItem>
             <StyledTabsLink onClick={() => handleBasicClick('deposit')} active={basicActive === 'deposit'}>
@@ -174,9 +183,8 @@ const Vault = (props) => {
               Withdrawal fee: 0.0%
             </StyledDescription>
             <StyledDescriptionSmall>
-              You will receive mooCakeV2RABBIT-WBNB token as a receipt for your deposited RABBIT-BNB LP assets. This
-              token is needed to withdraw your RABBIT-BNB LP, do not trade or transfer mooCakeV2RABBIT-WBNB to
-              strangers!
+              You will receive TUSK-BNB token as a receipt for your deposited TUSK-BNB LP assets. This
+              token is needed to withdraw your TUSK-BNB LP.
             </StyledDescriptionSmall>
           </MDBTabsPane>
           <MDBTabsPane show={basicActive === 'withdrawal'}>
@@ -185,12 +193,12 @@ const Vault = (props) => {
               onChange={(e) => setAmountToWithdraw(e.target.value)}/>
             )}
             <StyledDescription>Withdrawal will result in: </StyledDescription>
-            <StyledDescriptionSmall>Redeem moo1INCH1INCH token for 1INCH</StyledDescriptionSmall>
+            <StyledDescriptionSmall>Redeem disruptTUSK token for TUSK</StyledDescriptionSmall>
           </MDBTabsPane>
         </MDBTabsContent>
       </MDBCardBody>
       <div>
-        {basicActive === 'deposit' && !isAllowed && (
+        {basicActive === 'deposit' && (
           <div class="d-flex">
             {isAllowed ? (
               <>

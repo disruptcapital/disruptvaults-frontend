@@ -48,8 +48,8 @@ const Header = (props) => {
 
   return (
     <header>
-      <StyledNav expand="lg" fixed>
-        <MDBContainer>
+      <StyledNav expand="md" fixed>
+        <MDBContainer breakpoint="xl">
           <MDBNavbarBrand href="#">
             <DisruptVaultsIcon color={theme.text} />
           </MDBNavbarBrand>
@@ -69,9 +69,9 @@ const Header = (props) => {
             </span>
           </MDBNavbarToggler>
           <StyledCollapse navbar show={showNav}>
-            <MDBNavbarNav right fullWidth={false} className="align-items-lg-center align-items-end ms-auto">
+            <MDBNavbarNav right fullWidth={false} className="align-items-md-center align-items-end ms-auto">
               {connected ? (
-                <MDBNavbarItem className="me-lg-3 mb-lg-0 me-2 mb-2">
+                <MDBNavbarItem className="me-md-3 mb-md-0 me-2 mb-2">
                   <span
                     style={{
                       marginRight: '10px',
@@ -87,12 +87,12 @@ const Header = (props) => {
                   </span>
                 </MDBNavbarItem>
               ) : (
-                <MDBNavbarItem className="me-lg-3 mb-lg-0 me-2 mb-2">
+                <MDBNavbarItem className="me-md-3 mb-md-0 me-2 mb-2">
                   <LoggedOut />
                 </MDBNavbarItem>
               )}
-              <MDBNavbarItem className="me-lg-3 mb-lg-0 me-2 mb-2">
-                <a href="#!" role="button" onClick={() => setIsDarkMode(!isDarkMode)}>
+              <MDBNavbarItem className="me-md-3 mb-md-0 me-2 mb-2">
+                <a href="#" role="button" onClick={() => setIsDarkMode(!isDarkMode)}>
                   {isDarkMode ? <SunIcon /> : <MoonIcon />}
                 </a>
               </MDBNavbarItem>
