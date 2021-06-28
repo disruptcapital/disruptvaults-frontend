@@ -153,7 +153,7 @@ const Vault = (props) => {
           <div class="d-flex justify-content-evenly">
           <div class="text-center"><div>999.99%</div><div>APY</div></div>
           <div class="text-center"><div>999.99%</div><div>Daily</div></div>
-          <div class="text-center"><div>{tvl}%</div><div>TVL</div></div>
+          <div class="text-center"><div>${tvl}</div><div>TVL</div></div>
           
         </div>
         </div>
