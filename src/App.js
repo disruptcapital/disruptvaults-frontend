@@ -71,7 +71,7 @@ const App = () => {
       </main>
       <StyledFooter className="mt-auto text-center">
         <p>
-          Yield Optimizing Strategies by <a href="https://twitter.com/disrupttechno">@disruptcapital</a>.
+          Yield Optimizing Strategies by <a href="https://twitter.com/disruptvaults" target="_blank">@disruptcapital</a>.
         </p>
       </StyledFooter>
     </>
