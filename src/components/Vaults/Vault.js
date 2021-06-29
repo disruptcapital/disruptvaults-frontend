@@ -15,6 +15,7 @@ import {
   MDBInput,
 } from 'mdb-react-ui-kit';
 import styled from 'styled-components';
+import VaultHeader from 'features/vault/components/VaultHeader';
 
 const Vault = (props) => {
   const { web3, address, networkId, connected, connectWalletPending } = useConnectWallet();
@@ -96,11 +97,11 @@ const Vault = (props) => {
   }, [web3]);
 
   let deposit = () => {
-    
-    const vaultContract = new web3.eth.Contract(vaultABI, pool.vaultAddress); 
-    vaultContract.methods.deposit(decimalDivisor.multipliedBy(amountToDeposit).toString()).send({from: address}).then(() => {
-
-    });
+    const vaultContract = new web3.eth.Contract(vaultABI, pool.vaultAddress);
+    vaultContract.methods
+      .deposit(decimalDivisor.multipliedBy(amountToDeposit).toString())
+      .send({ from: address })
+      .then(() => {});
   };
 
   const depositAll = () => {
@@ -108,10 +109,11 @@ const Vault = (props) => {
   };
 
   let withdraw = () => {
-    const vaultContract = new web3.eth.Contract(vaultABI, pool.vaultAddress); 
-    vaultContract.methods.withdraw(decimalDivisor.multipliedBy(amountToWithdraw).toString()).send({from: address}).then(() => {
-
-    });
+    const vaultContract = new web3.eth.Contract(vaultABI, pool.vaultAddress);
+    vaultContract.methods
+      .withdraw(decimalDivisor.multipliedBy(amountToWithdraw).toString())
+      .send({ from: address })
+      .then(() => {});
   };
 
   const withdrawAll = () => {
@@ -138,30 +140,10 @@ const Vault = (props) => {
 
   return (
     <StyledCard>
-      <StyledVaultHeader>
-        <div className="m-2">
-          <StyledCardImage
-            className="img-fluid"
-            overlay="white-light"
-            hover
-            src={`${process.env.PUBLIC_URL}/${pool.logo}`}
-          />
-        </div>
-        <div style={{flexGrow: '1'}}>
-          <h5 className="mt-2 mb-0 font-weight-bold">{pool.name}</h5>
-          <StyledParagraphSmall className="font-weight-light">Uses: {pool.tokenDescription}</StyledParagraphSmall>
-          <div class="d-flex justify-content-evenly">
-          <div class="text-center"><div>999.99%</div><div>APY</div></div>
-          <div class="text-center"><div>999.99%</div><div>Daily</div></div>
-          <div class="text-center"><div>${tvl}</div><div>TVL</div></div>
-          
-        </div>
-        </div>
-        
-      </StyledVaultHeader>
+      <VaultHeader pool={pool} tvl={tvl} />
       <MDBCardBody>
-          <div>{`Owned: ${currentBalance}`}</div>
-          <div>Deposited: {depositedAmount}</div>
+        <div>{`Owned: ${currentBalance}`}</div>
+        <div>Deposited: {depositedAmount}</div>
         <MDBTabs fill className="mb-3">
           <MDBTabsItem>
             <StyledTabsLink onClick={() => handleBasicClick('deposit')} active={basicActive === 'deposit'}>
@@ -176,21 +158,35 @@ const Vault = (props) => {
         </MDBTabs>
         <MDBTabsContent>
           <MDBTabsPane show={basicActive === 'deposit'}>
-            {isAllowed && <StyledMDBInput label="Deposit Amount" type="number" className="mb-3" value={amountToDeposit} onChange={(e) => setAmountToDeposit(e.target.value)}/>}
+            {isAllowed && (
+              <StyledMDBInput
+                label="Deposit Amount"
+                type="number"
+                className="mb-3"
+                value={amountToDeposit}
+                onChange={(e) => setAmountToDeposit(e.target.value)}
+              />
+            )}
             <StyledDescription>
               Deposit fee: 0.0%
               <br />
               Withdrawal fee: 0.0%
             </StyledDescription>
             <StyledDescriptionSmall>
-              You will receive TUSK-BNB token as a receipt for your deposited TUSK-BNB LP assets. This
-              token is needed to withdraw your TUSK-BNB LP.
+              You will receive TUSK-BNB token as a receipt for your deposited TUSK-BNB LP assets. This token is needed
+              to withdraw your TUSK-BNB LP.
             </StyledDescriptionSmall>
           </MDBTabsPane>
           <MDBTabsPane show={basicActive === 'withdrawal'}>
             {isAllowed && (
-              <StyledMDBInput label="Withdraw Amount" type="number" disabled={depositedAmount == 0} className="mb-3" value={amountToWithdraw}
-              onChange={(e) => setAmountToWithdraw(e.target.value)}/>
+              <StyledMDBInput
+                label="Withdraw Amount"
+                type="number"
+                disabled={depositedAmount == 0}
+                className="mb-3"
+                value={amountToWithdraw}
+                onChange={(e) => setAmountToWithdraw(e.target.value)}
+              />
             )}
             <StyledDescription>Withdrawal will result in: </StyledDescription>
             <StyledDescriptionSmall>Redeem disruptTUSK token for TUSK</StyledDescriptionSmall>
@@ -238,21 +234,6 @@ const StyledCard = styled(MDBCard)`
   ${({ theme }) => theme.mediaQueries.lg} {
     width: 32%;
   }
-`;
-const StyledCardImage = styled(MDBCardImage)`
-  width: 80px;
-  height: 80px;
-`;
-const StyledParagraphSmall = styled.p`
-  font-size: 12px;
-  color: ${({ theme }) => theme.text};
-`;
-
-const StyledVaultHeader = styled.div`
-  display: flex !important;
-  align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 12px 0 rgb(0 0 0 / 7%), 0 2px 4px rgb(0 0 0 / 5%);
 `;
 
 const StyledDescription = styled.div`
