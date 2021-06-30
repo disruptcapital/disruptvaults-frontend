@@ -6,6 +6,7 @@ const lightColors = {
   secondaryText: '#5f6368',
   bg: 'rgba(237, 237, 237, 0.5)',
   bgSecondary: '#FFFFFF',
+  toastBorder: 'rgba(0, 0, 0, 0.3)',
 };
 
 const light = {

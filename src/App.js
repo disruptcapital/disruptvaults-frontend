@@ -16,6 +16,8 @@ import useTheme from 'hooks/useTheme';
 import { GlobalStyles } from './global';
 import styled from 'styled-components';
 import { MDBContainer } from 'mdb-react-ui-kit';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
 
 const App = () => {
   const [web3Modal, setModal] = useState(null);
@@ -51,6 +53,15 @@ const App = () => {
   return (
     <>
       <GlobalStyles />
+      <ToastContainer
+        position="top-right"
+        autoClose={6000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        rtl={false}
+        pauseOnFocusLoss
+        pauseOnHover
+      />
       <Header
         address={address}
         connected={connected}

@@ -16,10 +16,13 @@ import {
 } from 'mdb-react-ui-kit';
 import styled from 'styled-components';
 import VaultHeader from 'features/vault/components/VaultHeader';
+import {StyledSecondary} from 'components/Styled';
+import useApprove from 'hooks/useApprove';
 
 const Vault = (props) => {
   const { web3, address, networkId, connected, connectWalletPending } = useConnectWallet();
-  const { pool } = props;
+  const { pool = {} } = props;
+  const { depositTokenAddress, vaultAddress } = pool;
 
   const [currentBalance, setCurrentBalance] = useState(0);
   const [depositedAmount, setDepositedAmount] = useState(0);
@@ -28,6 +31,13 @@ const Vault = (props) => {
   const [isAllowed, setIsAllowed] = useState(false);
   const [decimalDivisor, setDecimalDivisor] = useState(new BigNumber(10).pow(18));
   const [tvl, setTvl] = useState(0);
+
+  const { execute: approve, allowance } = useApprove();
+
+  useEffect(()=> {
+    setIsAllowed(allowance > 0);
+  },[allowance]);
+
 
   useEffect(() => {
     if (!web3) return;
@@ -116,16 +126,12 @@ const Vault = (props) => {
       .then(() => {});
   };
 
-  const withdrawAll = () => {
+  const withdrawAll = () => { 
     console.log('WithdrawAll Clicked');
   };
-
-  const approve = () => {
-    const depositTokenContract = new web3.eth.Contract(erc20ABI, pool.depositTokenAddress);
-    depositTokenContract.methods
-      .approve(pool.vaultAddress, '115792089237316195423570985008687907853269984665640564039377283796003129639935')
-      .send({ from: address })
-      .then(() => {});
+  
+  const handleApproval = () => {
+      approve(web3, address, depositTokenAddress, vaultAddress);
   };
 
   const [basicActive, setBasicActive] = useState('deposit');
@@ -172,10 +178,10 @@ const Vault = (props) => {
               <br />
               Withdrawal fee: 0.0%
             </StyledDescription>
-            <StyledDescriptionSmall>
+            <StyledSecondary align="center">
               You will receive TUSK-BNB token as a receipt for your deposited TUSK-BNB LP assets. This token is needed
               to withdraw your TUSK-BNB LP.
-            </StyledDescriptionSmall>
+            </StyledSecondary>
           </MDBTabsPane>
           <MDBTabsPane show={basicActive === 'withdrawal'}>
             {isAllowed && (
@@ -189,7 +195,7 @@ const Vault = (props) => {
               />
             )}
             <StyledDescription>Withdrawal will result in: </StyledDescription>
-            <StyledDescriptionSmall>Redeem disruptTUSK token for TUSK</StyledDescriptionSmall>
+            <StyledSecondary align="center">Redeem disruptTUSK token for TUSK</StyledSecondary>
           </MDBTabsPane>
         </MDBTabsContent>
       </MDBCardBody>
@@ -202,7 +208,7 @@ const Vault = (props) => {
                 <StyledButton onClick={depositAll}>Deposit All</StyledButton>
               </>
             ) : (
-              <StyledButton onClick={approve}>Approve</StyledButton>
+              <StyledButton onClick={handleApproval}>Approve</StyledButton>
             )}
           </div>
         )}

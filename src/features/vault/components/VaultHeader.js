@@ -1,6 +1,7 @@
 import React from 'react';
 import { MDBCardImage } from 'mdb-react-ui-kit';
 import styled from 'styled-components';
+import {StyledSecondary} from 'components/Styled';
 
 const StyledVaultHeader = styled.div`
   display: flex !important;
@@ -12,11 +13,6 @@ const StyledVaultHeader = styled.div`
 const StyledCardImage = styled(MDBCardImage)`
   width: 80px;
   height: 80px;
-`;
-
-const StyledSecondary = styled.div`
-    font-size: 13px;
-    color: ${({ theme }) => theme.secondaryText};
 `;
 
 const VaultHeader = (props) => {
@@ -31,17 +27,17 @@ const VaultHeader = (props) => {
         <h5 className="mt-2 mb-0 font-weight-bold">{name}</h5>
         <StyledSecondary className="mb-2">Uses: {tokenDescription}</StyledSecondary>
         <div className="d-flex justify-content-evenly">
-          <div class="text-center">
+          <div>
             <div>999.99%</div>
-            <StyledSecondary>APY</StyledSecondary>
+            <StyledSecondary align="center">APY</StyledSecondary>
           </div>
-          <div class="text-center">
+          <div>
             <div>999.99%</div>
-            <StyledSecondary>Daily</StyledSecondary>
+            <StyledSecondary align="center">Daily</StyledSecondary>
           </div>
-          <div class="text-center">
+          <div>
             <div>{tvl}%</div>
-            <StyledSecondary>TVL</StyledSecondary>
+            <StyledSecondary align="center">TVL</StyledSecondary>
           </div>
         </div>
       </div>
