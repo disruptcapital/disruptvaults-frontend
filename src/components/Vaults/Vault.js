@@ -16,7 +16,7 @@ import {
 } from 'mdb-react-ui-kit';
 import styled from 'styled-components';
 import VaultHeader from 'features/vault/components/VaultHeader';
-import {StyledSecondary} from 'components/Styled';
+import { StyledSecondary } from 'components/Styled';
 import useApprove from 'hooks/useApprove';
 
 const Vault = (props) => {
@@ -33,13 +33,12 @@ const Vault = (props) => {
   const [isAllowed, setIsAllowed] = useState(false);
   const [decimalDivisor, setDecimalDivisor] = useState(new BigNumber(10).pow(18));
   const [tvl, setTvl] = useState(0);
-	const [pricePerFullShare, setPricePerFullShare] = useState(new BigNumber());
+  const [pricePerFullShare, setPricePerFullShare] = useState(new BigNumber());
   const { execute: approve, allowance } = useApprove();
-	const [shareDecimals, setShareDecimals] = useState(18);
-  useEffect(()=> {
+  const [shareDecimals, setShareDecimals] = useState(18);
+  useEffect(() => {
     setIsAllowed(allowance > 0);
-  },[allowance]);
-
+  }, [allowance]);
 
   useEffect(() => {
     if (!web3) return;
@@ -53,19 +52,18 @@ const Vault = (props) => {
       .call()
       .then((dec) => {
         var decimalsBn = new BigNumber(dec);
-		setShareDecimals(dec);
+        setShareDecimals(dec);
         setDecimalDivisor(new BigNumber(10).pow(decimalsBn.toNumber()));
 
         depositTokenContract.methods
           .balanceOf(address)
-          .call()	
+          .call()
           .then((balance) => {
             var balanceBn = new BigNumber(balance);
             const formattedBalance = balanceBn.dividedBy(decimalDivisor).toNumber();
             setCurrentBalance(formattedBalance);
           });
 
-		  
         // Getting token allowance status
         depositTokenContract.methods
           .allowance(address, pool.vaultAddress)
@@ -75,13 +73,13 @@ const Vault = (props) => {
 
             setIsAllowed(allowanceBn > 0);
           });
-		  vaultContract.methods
-		  	.getPricePerFullShare()
-			  .call()
-			  .then((ppfs) => {
-				  let ppfsBN = new BigNumber(ppfs);
-					setPricePerFullShare(ppfsBN.dividedBy(decimalDivisor));
-			  });
+        vaultContract.methods
+          .getPricePerFullShare()
+          .call()
+          .then((ppfs) => {
+            let ppfsBN = new BigNumber(ppfs);
+            setPricePerFullShare(ppfsBN.dividedBy(decimalDivisor));
+          });
 
         // Total supply of IOU tokens
         vaultContract.methods
@@ -96,7 +94,7 @@ const Vault = (props) => {
               .call()
               .then((iouBalance) => {
                 var iouBalanceBn = new BigNumber(iouBalance);
-				setSharesBalance(iouBalanceBn);
+                setSharesBalance(iouBalanceBn);
                 // Number of deposit tokens inside the vault.
                 vaultContract.methods
                   .balance()
@@ -111,9 +109,8 @@ const Vault = (props) => {
                         .dividedBy(decimalDivisor)
                         .toNumber(),
                     );
-					let sharesbydec = byDecimals(vaultBalanceBn, shareDecimals);
-					setSharesByDecimals(sharesbydec);
-
+                    let sharesbydec = byDecimals(vaultBalanceBn, shareDecimals);
+                    setSharesByDecimals(sharesbydec);
                   });
               });
           });
@@ -129,53 +126,47 @@ const Vault = (props) => {
   };
 
   const depositAll = () => {
-	const vaultContract = new web3.eth.Contract(vaultABI, pool.vaultAddress);
-	vaultContract.methods
-	.depositAll()
-	.send({ from: address })
-	.then(() => {});
+    const vaultContract = new web3.eth.Contract(vaultABI, pool.vaultAddress);
+    vaultContract.methods
+      .depositAll()
+      .send({ from: address })
+      .then(() => {});
   };
 
   let withdraw = async () => {
     const vaultContract = new web3.eth.Contract(vaultABI, pool.vaultAddress);
-	const amountToWithdrawBN = new BigNumber(amountToWithdraw);
-	const sharesAmount = amountToWithdrawBN
-	 	  .dividedBy(pricePerFullShare)
-	 	  .decimalPlaces(18, BigNumber.ROUND_UP);
+    const amountToWithdrawBN = new BigNumber(amountToWithdraw);
+    const sharesAmount = amountToWithdrawBN.dividedBy(pricePerFullShare).decimalPlaces(18, BigNumber.ROUND_UP);
 
-	var theAmount = convertAmountToRawNumber(sharesAmount, 18);
-	if (sharesAmount.times(100).dividedBy(sharesByDecimals).isGreaterThan(99)) {
-		vaultContract.methods
-		.withdrawAll()
-		.send({ from: address })
-		.then(() => {});
-	 
-	}
-	else
-	{
-		vaultContract.methods
-			.withdraw(theAmount.toString())
-			.send({ from: address })
-			.then(() => {});	
-	}
+    var theAmount = convertAmountToRawNumber(sharesAmount, 18);
+    if (sharesAmount.times(100).dividedBy(sharesByDecimals).isGreaterThan(99)) {
+      vaultContract.methods
+        .withdrawAll()
+        .send({ from: address })
+        .then(() => {});
+    } else {
+      vaultContract.methods
+        .withdraw(theAmount.toString())
+        .send({ from: address })
+        .then(() => {});
+    }
   };
 
   function byDecimals(number, tokenDecimals = 18) {
-	const decimals = new BigNumber(10).exponentiatedBy(tokenDecimals);
-	return new BigNumber(number).dividedBy(decimals).decimalPlaces(tokenDecimals);
+    const decimals = new BigNumber(10).exponentiatedBy(tokenDecimals);
+    return new BigNumber(number).dividedBy(decimals).decimalPlaces(tokenDecimals);
   }
 
-
-  const withdrawAll = () => { 
-	const vaultContract = new web3.eth.Contract(vaultABI, pool.vaultAddress);
-	vaultContract.methods
-	.withdrawAll()
-	.send({ from: address })
-	.then(() => {});
+  const withdrawAll = () => {
+    const vaultContract = new web3.eth.Contract(vaultABI, pool.vaultAddress);
+    vaultContract.methods
+      .withdrawAll()
+      .send({ from: address })
+      .then(() => {});
   };
-  
+
   const handleApproval = () => {
-      approve(web3, address, depositTokenAddress, vaultAddress);
+    approve(web3, address, depositTokenAddress, vaultAddress);
   };
 
   const [basicActive, setBasicActive] = useState('deposit');
@@ -189,10 +180,10 @@ const Vault = (props) => {
   };
 
   function convertAmountToRawNumber(value, decimals = 18) {
-	return new BigNumber(value)
-	  .times(new BigNumber('10').pow(decimals))
-	  .decimalPlaces(0, BigNumber.ROUND_DOWN)
-	  .toString(10);
+    return new BigNumber(value)
+      .times(new BigNumber('10').pow(decimals))
+      .decimalPlaces(0, BigNumber.ROUND_DOWN)
+      .toString(10);
   }
 
   return (
@@ -200,10 +191,9 @@ const Vault = (props) => {
       <VaultHeader pool={pool} tvl={tvl} />
       <MDBCardBody>
         <div>{`Owned: ${currentBalance}`}</div>
-        <div>Deposited: {byDecimals(
-            sharesBalance.multipliedBy(new BigNumber(pool.pricePerFullShare)),
-            18
-          ).toFormat(8)}{' '}</div>
+        <div>
+          Deposited: {byDecimals(sharesBalance.multipliedBy(new BigNumber(pool.pricePerFullShare)), 18).toFormat(8)}{' '}
+        </div>
         <MDBTabs fill className="mb-3">
           <MDBTabsItem>
             <StyledTabsLink onClick={() => handleBasicClick('deposit')} active={basicActive === 'deposit'}>
@@ -279,7 +269,7 @@ const Vault = (props) => {
       </div>
     </StyledCard>
   );
-		};
+};
 
 const StyledCard = styled(MDBCard)`
   width: 100%;

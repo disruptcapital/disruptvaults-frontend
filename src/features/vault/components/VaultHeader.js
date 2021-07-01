@@ -1,7 +1,7 @@
 import React from 'react';
 import { MDBCardImage } from 'mdb-react-ui-kit';
 import styled from 'styled-components';
-import {StyledSecondary} from 'components/Styled';
+import { StyledSecondary } from 'components/Styled';
 
 const StyledVaultHeader = styled.div`
   display: flex !important;
