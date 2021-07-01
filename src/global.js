@@ -20,13 +20,13 @@ export const GlobalStyles = createGlobalStyle`
   
   .Toastify__toast {
     background-color: ${({ theme }) => theme.bgSecondary};
-    color: ${({ theme }) => theme.text };
+    color: ${({ theme }) => theme.text};
     border: 1px solid;
-    border-color: ${({ theme }) => theme.toastBorder };
+    border-color: ${({ theme }) => theme.toastBorder};
   }
   
   .Toastify__close-button--default {
-    color: ${({ theme }) => theme.text };
+    color: ${({ theme }) => theme.text};
   }
 
   .Toastify__toast-container--top-right {

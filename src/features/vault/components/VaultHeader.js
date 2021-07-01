@@ -1,7 +1,7 @@
 import React from 'react';
 import { MDBCardImage } from 'mdb-react-ui-kit';
 import styled from 'styled-components';
-import {StyledSecondary} from 'components/Styled';
+import { StyledSecondary } from 'components/Styled';
 
 const StyledVaultHeader = styled.div`
   display: flex !important;
@@ -36,7 +36,7 @@ const VaultHeader = (props) => {
             <StyledSecondary align="center">Daily</StyledSecondary>
           </div>
           <div>
-            <div>{tvl}%</div>
+            <div>{tvl}</div>
             <StyledSecondary align="center">TVL</StyledSecondary>
           </div>
         </div>

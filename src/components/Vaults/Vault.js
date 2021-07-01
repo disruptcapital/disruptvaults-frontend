@@ -4,7 +4,6 @@ import { erc20ABI, vaultABI } from '../../configure/abi';
 import BigNumber from 'bignumber.js';
 import {
   MDBCard,
-  MDBCardImage,
   MDBCardBody,
   MDBBtn,
   MDBTabs,
@@ -16,11 +15,14 @@ import {
 } from 'mdb-react-ui-kit';
 import styled from 'styled-components';
 import VaultHeader from 'features/vault/components/VaultHeader';
-import {StyledSecondary} from 'components/Styled';
+import { StyledSecondary } from 'components/Styled';
 import useApprove from 'hooks/useApprove';
+import useRefresh from 'hooks/useRefresh';
+import { getAllowance } from 'web3/approval';
+import { formatTvl } from 'common/format';
 
 const Vault = (props) => {
-  const { web3, address, networkId, connected, connectWalletPending } = useConnectWallet();
+  const { web3, address } = useConnectWallet();
   const { pool = {} } = props;
   const { depositTokenAddress, vaultAddress } = pool;
 
@@ -28,16 +30,26 @@ const Vault = (props) => {
   const [depositedAmount, setDepositedAmount] = useState(0);
   const [amountToDeposit, setAmountToDeposit] = useState(0);
   const [amountToWithdraw, setAmountToWithdraw] = useState(0);
-  const [isAllowed, setIsAllowed] = useState(false);
+  const [isAllowed, setIsAllowed] = useState(null);
   const [decimalDivisor, setDecimalDivisor] = useState(new BigNumber(10).pow(18));
   const [tvl, setTvl] = useState(0);
 
   const { execute: approve, allowance } = useApprove();
-
-  useEffect(()=> {
+  useEffect(() => {
     setIsAllowed(allowance > 0);
-  },[allowance]);
+  }, [allowance]);
 
+  const { slowRefresh } = useRefresh();
+  useEffect(() => {
+    async function update({ web3, address, depositTokenAddress, vaultAddress }) {
+      const allowance = await getAllowance({ web3, address, depositTokenAddress, vaultAddress });
+      setIsAllowed(allowance > 0);
+    }
+
+    if (web3) {
+      update({ web3, address, depositTokenAddress, vaultAddress });
+    }
+  }, [slowRefresh, web3, address, depositTokenAddress, vaultAddress]);
 
   useEffect(() => {
     if (!web3) return;
@@ -60,16 +72,6 @@ const Vault = (props) => {
             var balanceBn = new BigNumber(balance);
             const formattedBalance = balanceBn.dividedBy(decimalDivisor).toNumber();
             setCurrentBalance(formattedBalance);
-          });
-
-        // Getting token allowance status
-        depositTokenContract.methods
-          .allowance(address, pool.vaultAddress)
-          .call()
-          .then((allowance) => {
-            var allowanceBn = new BigNumber(allowance);
-
-            setIsAllowed(allowanceBn > 0);
           });
 
         // Total supply of IOU tokens
@@ -126,12 +128,12 @@ const Vault = (props) => {
       .then(() => {});
   };
 
-  const withdrawAll = () => { 
+  const withdrawAll = () => {
     console.log('WithdrawAll Clicked');
   };
-  
+
   const handleApproval = () => {
-      approve(web3, address, depositTokenAddress, vaultAddress);
+    approve(web3, address, depositTokenAddress, vaultAddress);
   };
 
   const [basicActive, setBasicActive] = useState('deposit');
@@ -146,7 +148,7 @@ const Vault = (props) => {
 
   return (
     <StyledCard>
-      <VaultHeader pool={pool} tvl={tvl} />
+      <VaultHeader pool={pool} tvl={formatTvl(tvl)} />
       <MDBCardBody>
         <div>{`Owned: ${currentBalance}`}</div>
         <div>Deposited: {depositedAmount}</div>
@@ -246,13 +248,6 @@ const StyledDescription = styled.div`
   color: ${({ theme }) => theme.disabled};
   font-size: 14px;
   font-weight: bold;
-  text-align: center;
-  margin-bottom: 1.5rem;
-`;
-
-const StyledDescriptionSmall = styled.div`
-  color: ${({ theme }) => theme.disabled};
-  font-size: 12px;
   text-align: center;
   margin-bottom: 1.5rem;
 `;

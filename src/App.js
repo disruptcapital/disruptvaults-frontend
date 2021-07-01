@@ -18,6 +18,7 @@ import styled from 'styled-components';
 import { MDBContainer } from 'mdb-react-ui-kit';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
+import { RefreshContextProvider } from 'contexts/RefreshContext';
 
 const App = () => {
   const [web3Modal, setModal] = useState(null);
@@ -82,7 +83,11 @@ const App = () => {
       </main>
       <StyledFooter className="mt-auto text-center">
         <p>
-          Yield Optimizing Strategies by <a href="https://twitter.com/disruptvaults" target="_blank">@disruptcapital</a>.
+          Yield Optimizing Strategies by{' '}
+          <a href="https://twitter.com/disruptvaults" target="_blank">
+            @disruptcapital
+          </a>
+          .
         </p>
       </StyledFooter>
     </>
@@ -97,7 +102,9 @@ const AppWrapper = () => {
   return (
     <Provider store={store}>
       <ThemeContextProvider>
-        <App />
+        <RefreshContextProvider>
+          <App />
+        </RefreshContextProvider>
       </ThemeContextProvider>
     </Provider>
   );
