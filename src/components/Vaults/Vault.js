@@ -21,6 +21,7 @@ import useRefresh from 'hooks/useRefresh';
 import { getAllowance } from 'web3/approval';
 import { formatTvl } from 'common/format';
 import { deposit } from 'web3/deposit';
+import { withdraw } from 'web3/withdraw';
 import NumberFormat from 'react-number-format';
 
 const Vault = (props) => {
@@ -130,22 +131,21 @@ const Vault = (props) => {
     deposit({ web3, address, vaultAddress, amount, isAll });
   };
 
-  let withdraw = async () => {
-    const vaultContract = new web3.eth.Contract(vaultABI, pool.vaultAddress);
-    const amountToWithdrawBN = new BigNumber(amountToWithdraw);
-    const sharesAmount = amountToWithdrawBN.dividedBy(pricePerFullShare).decimalPlaces(18, BigNumber.ROUND_UP);
-
-    var theAmount = convertAmountToRawNumber(sharesAmount, 18);
-    if (sharesAmount.times(100).dividedBy(sharesByDecimals).isGreaterThan(99)) {
-      vaultContract.methods
-        .withdrawAll()
-        .send({ from: address })
-        .then(() => {});
+  const handleWithdrawal = (e, isAll) => {
+    let withdrawAll = isAll;
+    let amount = null;
+    if (!isAll) {
+      const amountToWithdrawBN = new BigNumber(amountToWithdraw);
+      const sharesAmount = amountToWithdrawBN.dividedBy(pricePerFullShare).decimalPlaces(18, BigNumber.ROUND_UP);
+  
+      amount = convertAmountToRawNumber(sharesAmount, 18);
+      if (sharesAmount.times(100).dividedBy(sharesByDecimals).isGreaterThan(99)) {
+        withdrawAll = true;
+        amount = null;
+      }
+      withdraw({ web3, address, vaultAddress, amount, isAll: withdrawAll });
     } else {
-      vaultContract.methods
-        .withdraw(theAmount.toString())
-        .send({ from: address })
-        .then(() => {});
+      withdraw({ web3, address, vaultAddress, amount, isAll });
     }
   };
 
@@ -154,20 +154,12 @@ const Vault = (props) => {
     let withDecimals = new BigNumber(number);
 
     try {
-      withDecimals.dividedBy(decimals).decimalPlaces(tokenDecimals);
+      withDecimals = withDecimals.dividedBy(decimals).decimalPlaces(tokenDecimals);
     } catch (err) {
       //console.log(err);
     }
     return withDecimals;
   }
-
-  const withdrawAll = () => {
-    const vaultContract = new web3.eth.Contract(vaultABI, pool.vaultAddress);
-    vaultContract.methods
-      .withdrawAll()
-      .send({ from: address })
-      .then(() => {});
-  };
 
   const handleApproval = () => {
     approve(web3, address, depositTokenAddress, vaultAddress);
@@ -259,7 +251,7 @@ const Vault = (props) => {
               <div class="form-outline">
                 <StyledNumberFormat
                   thousandSeparator={true}
-                  disabled={depositedAmount == 0}
+                  disabled={depositedAmount === 0}
                   className="form-control mb-3"
                   value={amountToWithdraw}
                   onValueChange={(values) => {
@@ -311,10 +303,10 @@ const Vault = (props) => {
         )}
         {activeTab === 'withdrawal' && (
           <div class="d-flex">
-            <StyledButton onClick={withdraw} disabled={depositedAmount == 0} style={{ marginRight: '2px' }}>
+            <StyledButton onClick={handleWithdrawal} disabled={depositedAmount === 0} style={{ marginRight: '2px' }}>
               Withdraw
             </StyledButton>
-            <StyledButton onClick={withdrawAll} disabled={depositedAmount == 0}>
+            <StyledButton onClick={(e) => handleWithdrawal(e, true)} disabled={depositedAmount === 0}>
               Withdraw All
             </StyledButton>
           </div>
@@ -368,7 +360,7 @@ const StyledTabsLink = styled(MDBTabsLink)`
 `;
 
 const StyledNumberFormat = styled(NumberFormat)`
-  color: ${({ theme }) => `${theme.text}`};
+  color: ${({ theme }) => `${theme.text} !important`};
 `;
 
 const StyledLabel = styled.label`

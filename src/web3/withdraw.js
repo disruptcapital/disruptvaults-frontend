@@ -1,40 +1,43 @@
-import { vaultABI } from 'configure';
+import { vaultABI } from '../configure';
 import { transactionToast, messageToast } from 'common/toasts';
 
-export const deposit = ({ web3, address, vaultAddress, amount, isAll }) => {
-  _deposit({ web3, address, vaultAddress, amount, isAll })
+export const withdraw = ({ web3, address, vaultAddress, amount, isAll }) => {
+  _withdraw({ web3, address, vaultAddress, amount, isAll })
     .then((data) => {
-      messageToast('Your deposit was successful.');
+      messageToast('Your withdrawal was successful.');
       //update balances
     })
     .catch((error) => {
-      messageToast('An error occurred while depositing to the vault.');
+      messageToast('An error occurred while withdrawing from the vault.');
     });
 };
 
-const _deposit = ({ web3, address, vaultAddress, amount, isAll }) => {
+const _withdraw = ({ web3, address, vaultAddress, amount, isAll }) => {
   return new Promise((resolve, reject) => {
     const contract = new web3.eth.Contract(vaultABI, vaultAddress);
 
     if (isAll) {
       contract.methods
-        .depositAll()
+        .withdrawAll()
         .send({ from: address })
         .on('transactionHash', function (hash) {
           transactionToast(hash);
         })
         .on('receipt', function (receipt) {
+          console.log(receipt);
           resolve();
         })
         .on('error', function (error) {
+          console.log(error);
           reject(error);
         })
         .catch((error) => {
+          console.log(error);
           reject(error);
         });
     } else {
       contract.methods
-        .deposit(amount)
+        .withdraw(amount)
         .send({ from: address })
         .on('transactionHash', function (hash) {
           transactionToast(hash);
