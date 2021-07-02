@@ -20,7 +20,7 @@ import useApprove from 'hooks/useApprove';
 import useRefresh from 'hooks/useRefresh';
 import { getAllowance } from 'web3/approval';
 import { formatTvl } from 'common/format';
-import {deposit} from 'web3/deposit';
+import { deposit } from 'web3/deposit';
 
 const Vault = (props) => {
   const { web3, address } = useConnectWallet();
@@ -68,7 +68,7 @@ const Vault = (props) => {
       .call()
       .then((dec) => {
         var decimalsBn = new BigNumber(dec);
-        setShareDecimals(dec);
+        setShareDecimals(parseInt(dec));
         setDecimalDivisor(new BigNumber(10).pow(decimalsBn.toNumber()));
 
         depositTokenContract.methods
@@ -126,7 +126,7 @@ const Vault = (props) => {
 
   const handleDeposit = (e, isAll) => {
     const amount = isAll ? null : decimalDivisor.multipliedBy(amountToDeposit).toString();
-    deposit({web3, address, vaultAddress, amount, isAll});
+    deposit({ web3, address, vaultAddress, amount, isAll });
   };
 
   let withdraw = async () => {
@@ -150,7 +150,14 @@ const Vault = (props) => {
 
   function byDecimals(number, tokenDecimals = 18) {
     const decimals = new BigNumber(10).exponentiatedBy(tokenDecimals);
-    return new BigNumber(number).dividedBy(decimals).decimalPlaces(tokenDecimals);
+    let withDecimals = new BigNumber(number);
+
+    try {
+      withDecimals.dividedBy(decimals).decimalPlaces(tokenDecimals);
+    } catch (err) {
+      //console.log(err);
+    }
+    return withDecimals;
   }
 
   const withdrawAll = () => {
