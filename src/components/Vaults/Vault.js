@@ -21,6 +21,7 @@ import useRefresh from 'hooks/useRefresh';
 import { getAllowance } from 'web3/approval';
 import { formatTvl } from 'common/format';
 import { deposit } from 'web3/deposit';
+import NumberFormat from 'react-number-format';
 
 const Vault = (props) => {
   const { web3, address } = useConnectWallet();
@@ -31,8 +32,8 @@ const Vault = (props) => {
   const [currentBalance, setCurrentBalance] = useState(0);
   const [depositedAmount, setDepositedAmount] = useState(0);
   const [sharesByDecimals, setSharesByDecimals] = useState(0);
-  const [amountToDeposit, setAmountToDeposit] = useState(0);
-  const [amountToWithdraw, setAmountToWithdraw] = useState(0);
+  const [amountToDeposit, setAmountToDeposit] = useState();
+  const [amountToWithdraw, setAmountToWithdraw] = useState();
   const [isAllowed, setIsAllowed] = useState(null);
   const [decimalDivisor, setDecimalDivisor] = useState(new BigNumber(10).pow(18));
   const [tvl, setTvl] = useState(0);
@@ -211,13 +212,37 @@ const Vault = (props) => {
         <MDBTabsContent>
           <MDBTabsPane show={activeTab === 'deposit'}>
             {isAllowed && (
-              <StyledMDBInput
-                label="Deposit Amount"
-                type="number"
-                className="mb-3"
-                value={amountToDeposit}
-                onChange={(e) => setAmountToDeposit(e.target.value)}
-              />
+              <div class="form-outline">
+                <StyledNumberFormat
+                  thousandSeparator={true}
+                  className="form-control mb-3"
+                  value={amountToDeposit}
+                  onValueChange={(values) => {
+                    setAmountToDeposit(values.floatValue);
+                  }}
+                />
+
+                <StyledLabel
+                  className="form-label"
+                  style={
+                    amountToDeposit !== undefined
+                      ? { transform: 'translateY(-1rem) translateY(0.1rem) scale(0.8)' }
+                      : {}
+                  }
+                >
+                  Deposit Amount
+                </StyledLabel>
+                <div class="form-notch">
+                  <div class="form-notch-leading"></div>
+                  <div
+                    class="form-notch-middle"
+                    style={
+                      amountToDeposit !== undefined ? { borderTop: 'none', width: '100.8px' } : { width: '100.8px' }
+                    }
+                  ></div>
+                  <div class="form-notch-trailing"></div>
+                </div>
+              </div>
             )}
             <StyledDescription>
               Deposit fee: 0.0%
@@ -231,14 +256,38 @@ const Vault = (props) => {
           </MDBTabsPane>
           <MDBTabsPane show={activeTab === 'withdrawal'}>
             {isAllowed && (
-              <StyledMDBInput
-                label="Withdraw Amount"
-                type="number"
-                disabled={depositedAmount == 0}
-                className="mb-3"
-                value={amountToWithdraw}
-                onChange={(e) => setAmountToWithdraw(e.target.value)}
-              />
+              <div class="form-outline">
+                <StyledNumberFormat
+                  thousandSeparator={true}
+                  disabled={depositedAmount == 0}
+                  className="form-control mb-3"
+                  value={amountToWithdraw}
+                  onValueChange={(values) => {
+                    setAmountToWithdraw(values.floatValue);
+                  }}
+                />
+
+                <StyledLabel
+                  className="form-label"
+                  style={
+                    amountToWithdraw !== undefined
+                      ? { transform: 'translateY(-1rem) translateY(0.1rem) scale(0.8)' }
+                      : {}
+                  }
+                >
+                  Withdrawal Amount
+                </StyledLabel>
+                <div class="form-notch">
+                  <div class="form-notch-leading"></div>
+                  <div
+                    class="form-notch-middle"
+                    style={
+                      amountToWithdraw !== undefined ? { borderTop: 'none', width: '120.8px' } : { width: '120.8px' }
+                    }
+                  ></div>
+                  <div class="form-notch-trailing"></div>
+                </div>
+              </div>
             )}
             <StyledDescription>Withdrawal will result in: </StyledDescription>
             <StyledSecondary align="center">Redeem disruptTUSK token for TUSK</StyledSecondary>
@@ -318,10 +367,12 @@ const StyledTabsLink = styled(MDBTabsLink)`
   }
 `;
 
-const StyledMDBInput = styled(MDBInput)`
-  &.form-control ~ .form-label {
-    color: ${({ theme }) => `${theme.text}`};
-  }
+const StyledNumberFormat = styled(NumberFormat)`
+  color: ${({ theme }) => `${theme.text}`};
+`;
+
+const StyledLabel = styled.label`
+  color: ${({ theme }) => `${theme.text} !important`};
 `;
 
 export default Vault;
