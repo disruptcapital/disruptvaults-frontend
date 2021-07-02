@@ -1,16 +1,6 @@
 import { erc20ABI } from 'configure';
 import BigNumber from 'bignumber.js';
-import { toast } from 'react-toastify';
-import { getNetworkTxUrl } from 'common/getNetworkData';
-
-const ApprovalToast = (hash) => (
-  <div>
-    {`Approval has been submitted to the the network. You can check your status `}
-    <a href={getNetworkTxUrl(hash)} target="_blank" rel="noreferrer">
-      here
-    </a>
-  </div>
-);
+import { transactionToast } from 'common/toasts';
 
 export const approval = ({ web3, address, depositTokenAddress, vaultAddress }) => {
   return new Promise((resolve, reject) => {
@@ -20,15 +10,7 @@ export const approval = ({ web3, address, depositTokenAddress, vaultAddress }) =
       .approve(vaultAddress, web3.utils.toWei('8000000000', 'ether'))
       .send({ from: address })
       .on('transactionHash', function (hash) {
-        toast(ApprovalToast(hash), {
-          position: 'top-right',
-          autoClose: 6000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: false,
-          progress: undefined,
-        });
+        transactionToast(hash);
       })
       .on('receipt', function (receipt) {
         resolve(new BigNumber(8000000000).toNumber());

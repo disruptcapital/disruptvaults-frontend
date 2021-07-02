@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useConnectWallet } from 'features/home/redux/hooks';
-import { erc20ABI, vaultABI } from '../../configure/abi';
+import { erc20ABI, vaultABI } from 'configure/abi';
 import BigNumber from 'bignumber.js';
 import {
   MDBCard,
@@ -20,6 +20,7 @@ import useApprove from 'hooks/useApprove';
 import useRefresh from 'hooks/useRefresh';
 import { getAllowance } from 'web3/approval';
 import { formatTvl } from 'common/format';
+import {deposit} from 'web3/deposit';
 
 const Vault = (props) => {
   const { web3, address } = useConnectWallet();
@@ -37,7 +38,7 @@ const Vault = (props) => {
   const [tvl, setTvl] = useState(0);
   const [pricePerFullShare, setPricePerFullShare] = useState(new BigNumber());
   const [shareDecimals, setShareDecimals] = useState(18);
-  
+
   const { execute: approve, allowance } = useApprove();
   useEffect(() => {
     setIsAllowed(allowance > 0);
@@ -121,22 +122,11 @@ const Vault = (props) => {
               });
           });
       });
-  }, [web3]);
+  }, [web3, slowRefresh]);
 
-  let deposit = () => {
-    const vaultContract = new web3.eth.Contract(vaultABI, pool.vaultAddress);
-    vaultContract.methods
-      .deposit(decimalDivisor.multipliedBy(amountToDeposit).toString())
-      .send({ from: address })
-      .then(() => {});
-  };
-
-  const depositAll = () => {
-    const vaultContract = new web3.eth.Contract(vaultABI, pool.vaultAddress);
-    vaultContract.methods
-      .depositAll()
-      .send({ from: address })
-      .then(() => {});
+  const handleDeposit = (e, isAll) => {
+    const amount = isAll ? null : decimalDivisor.multipliedBy(amountToDeposit).toString();
+    deposit({web3, address, vaultAddress, amount, isAll});
   };
 
   let withdraw = async () => {
@@ -175,14 +165,13 @@ const Vault = (props) => {
     approve(web3, address, depositTokenAddress, vaultAddress);
   };
 
-  const [basicActive, setBasicActive] = useState('deposit');
+  const [activeTab, setActiveTab] = useState('deposit');
 
-  const handleBasicClick = (value) => {
-    if (value === basicActive) {
+  const handleTabClick = (value) => {
+    if (value === activeTab) {
       return;
     }
-
-    setBasicActive(value);
+    setActiveTab(value);
   };
 
   function convertAmountToRawNumber(value, decimals = 18) {
@@ -202,18 +191,18 @@ const Vault = (props) => {
         </div>
         <MDBTabs fill className="mb-3">
           <MDBTabsItem>
-            <StyledTabsLink onClick={() => handleBasicClick('deposit')} active={basicActive === 'deposit'}>
+            <StyledTabsLink onClick={() => handleTabClick('deposit')} active={activeTab === 'deposit'}>
               Deposit
             </StyledTabsLink>
           </MDBTabsItem>
           <MDBTabsItem>
-            <StyledTabsLink onClick={() => handleBasicClick('withdrawal')} active={basicActive === 'withdrawal'}>
+            <StyledTabsLink onClick={() => handleTabClick('withdrawal')} active={activeTab === 'withdrawal'}>
               Withdrawal
             </StyledTabsLink>
           </MDBTabsItem>
         </MDBTabs>
         <MDBTabsContent>
-          <MDBTabsPane show={basicActive === 'deposit'}>
+          <MDBTabsPane show={activeTab === 'deposit'}>
             {isAllowed && (
               <StyledMDBInput
                 label="Deposit Amount"
@@ -233,7 +222,7 @@ const Vault = (props) => {
               to withdraw your TUSK-BNB LP.
             </StyledSecondary>
           </MDBTabsPane>
-          <MDBTabsPane show={basicActive === 'withdrawal'}>
+          <MDBTabsPane show={activeTab === 'withdrawal'}>
             {isAllowed && (
               <StyledMDBInput
                 label="Withdraw Amount"
@@ -250,21 +239,23 @@ const Vault = (props) => {
         </MDBTabsContent>
       </MDBCardBody>
       <div>
-        {basicActive === 'deposit' && (
+        {activeTab === 'deposit' && (
           <div class="d-flex">
             {isAllowed ? (
               <>
-                <StyledButton onClick={deposit}>Deposit</StyledButton>
-                <StyledButton onClick={depositAll}>Deposit All</StyledButton>
+                <StyledButton onClick={handleDeposit} style={{ marginRight: '2px' }}>
+                  Deposit
+                </StyledButton>
+                <StyledButton onClick={(e) => handleDeposit(e, true)}>Deposit All</StyledButton>
               </>
             ) : (
               <StyledButton onClick={handleApproval}>Approve</StyledButton>
             )}
           </div>
         )}
-        {basicActive === 'withdrawal' && (
+        {activeTab === 'withdrawal' && (
           <div class="d-flex">
-            <StyledButton onClick={withdraw} disabled={depositedAmount == 0}>
+            <StyledButton onClick={withdraw} disabled={depositedAmount == 0} style={{ marginRight: '2px' }}>
               Withdraw
             </StyledButton>
             <StyledButton onClick={withdrawAll} disabled={depositedAmount == 0}>
@@ -279,16 +270,17 @@ const Vault = (props) => {
 
 const StyledCard = styled(MDBCard)`
   width: 100%;
-  margin: 5px;
+  margin: 15px;
   border-radius: 0;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 50%), 0 4px 6px -2px rgb(0 0 0 / 5%);
   background: ${({ theme }) => theme.bgSecondary};
 
-  ${({ theme }) => theme.mediaQueries.md} {
-    width: 48%;
+  ${({ theme }) => theme.mediaQueries.lg} {
+    width: 46%;
   }
 
-  ${({ theme }) => theme.mediaQueries.lg} {
-    width: 32%;
+  ${({ theme }) => theme.mediaQueries.xl} {
+    width: 30%;
   }
 `;
 
@@ -304,7 +296,6 @@ const StyledButton = styled(MDBBtn)`
   width: 100%;
   border-radius: 0;
   box-shadow: none;
-  margin: 1px;
 `;
 
 const StyledTabsLink = styled(MDBTabsLink)`

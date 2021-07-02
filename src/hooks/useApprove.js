@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { approval } from 'web3/approval';
-import { toast } from 'react-toastify';
+import { messageToast } from 'common/toasts';
 import BigNumber from 'bignumber.js';
 
 import {
@@ -29,28 +29,12 @@ const useApprove = () => {
         .then((data) => {
           setAllowance(new BigNumber(data));
           setStatus(VAULT_FETCH_APPROVAL_SUCCESS);
-          toast('Approving access to the vault was successful.', {
-            position: 'top-right',
-            autoClose: 6000,
-            hideProgressBar: false,
-            closeOnClick: false,
-            pauseOnHover: true,
-            draggable: false,
-            progress: undefined,
-          });
+          messageToast('Approving access to the vault was successful.');
         })
         .catch((error) => {
           setError(error);
           setStatus(VAULT_FETCH_APPROVAL_FAILURE);
-          toast('An error occurred while approving access to the vault.', {
-            position: 'top-right',
-            autoClose: 6000,
-            hideProgressBar: false,
-            closeOnClick: false,
-            pauseOnHover: true,
-            draggable: false,
-            progress: undefined,
-          });
+          messageToast('An error occurred while approving access to the vault.');
         });
     },
     [approval],
