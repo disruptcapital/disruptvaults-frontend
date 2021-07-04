@@ -36,4 +36,16 @@ export const GlobalStyles = createGlobalStyle`
   .Toastify__progress-bar--default {
     background: linear-gradient(90deg, rgba(20,26,164,1) 0%, rgba(109,146,233,1) 50%, rgba(0,161,255,1) 100%);
   }
+
+  .web3modal-modal-card {
+    height: 80%;  
+    ${({ theme }) => theme.mediaQueries.sm} {
+      height: 85%;
+    }
+
+    ${({ theme }) => theme.mediaQueries.modalMd} {
+      height: auto;
+    }
+    
+  }
   `;

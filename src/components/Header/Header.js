@@ -92,7 +92,14 @@ const Header = (props) => {
                 </MDBNavbarItem>
               )}
               <MDBNavbarItem className="me-md-3 mb-md-0 me-2 mb-2">
-                <a href="#" role="button" onClick={() => setIsDarkMode(!isDarkMode)}>
+                <a href="#" role="button" onClick={
+                  () => {
+                    setIsDarkMode(!isDarkMode);
+                    if (window.matchMedia('screen and (max-width: 768px)')){
+                      setShowNav(false);
+                    }
+                    }
+                  }>
                   {isDarkMode ? <SunIcon /> : <MoonIcon />}
                 </a>
               </MDBNavbarItem>
@@ -100,7 +107,12 @@ const Header = (props) => {
                 <button
                   type="button"
                   className="btn btn-primary btn-rounded"
-                  onClick={connected ? disconnectWallet : connectWallet}
+                  onClick={() => {
+                    connected ? disconnectWallet() : connectWallet();
+                    if (window.matchMedia('screen and (max-width: 768px)')){
+                      setShowNav(false);
+                    }
+                  }}
                   style={{
                     minWidth: '130px',
                   }}

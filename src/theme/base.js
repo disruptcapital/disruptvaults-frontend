@@ -4,6 +4,7 @@ export const breakpointMap = {
   md: 852,
   lg: 968,
   xl: 1080,
+  modalMd: 769,
 };
 
 const breakpoints = Object.values(breakpointMap).map((breakpoint) => `${breakpoint}px`);
@@ -14,6 +15,7 @@ const mediaQueries = {
   md: `@media screen and (min-width: ${breakpointMap.md}px)`,
   lg: `@media screen and (min-width: ${breakpointMap.lg}px)`,
   xl: `@media screen and (min-width: ${breakpointMap.xl}px)`,
+  modalMd: `@media screen and (min-width: ${breakpointMap.modalMd}px)`,
 };
 
 export default {
