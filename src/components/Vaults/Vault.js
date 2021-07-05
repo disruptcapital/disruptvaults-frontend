@@ -78,7 +78,7 @@ const Vault = (props) => {
           .call()
           .then((balance) => {
             var balanceBn = new BigNumber(balance);
-            const formattedBalance = balanceBn.dividedBy(decimalDivisor).toNumber();
+            const formattedBalance = balanceBn.dividedBy(decimalDivisor).toFormat(8);
             setCurrentBalance(formattedBalance);
           });
 
@@ -185,9 +185,15 @@ const Vault = (props) => {
     <StyledCard>
       <VaultHeader pool={pool} tvl={formatTvl(tvl)} />
       <MDBCardBody>
-        <div>{`Owned: ${currentBalance}`}</div>
-        <div>
-          Deposited: {byDecimals(sharesBalance.multipliedBy(new BigNumber(pool.pricePerFullShare)), 18).toFormat(8)}{' '}
+      <div className="d-flex justify-content-evenly mb-3">
+          <div>
+            <div>{currentBalance}</div>
+            <StyledSecondary align="center">Wallet</StyledSecondary>
+          </div>
+          <div>
+            <div>{byDecimals(sharesBalance.multipliedBy(new BigNumber(pool.pricePerFullShare)), 18).toFormat(8)}</div>
+            <StyledSecondary align="center">Deposited</StyledSecondary>
+          </div>
         </div>
         <MDBTabs fill className="mb-3">
           <MDBTabsItem>
@@ -323,8 +329,8 @@ const StyledCard = styled(MDBCard)`
   box-shadow: 0 10px 15px -3px rgb(0 0 0 / 50%), 0 4px 6px -2px rgb(0 0 0 / 5%);
   background: ${({ theme }) => theme.bgSecondary};
 
-  ${({ theme }) => theme.mediaQueries.lg} {
-    width: 46%;
+  ${({ theme }) => theme.mediaQueries.md} {
+    width: 45%;
   }
 
   ${({ theme }) => theme.mediaQueries.xl} {
