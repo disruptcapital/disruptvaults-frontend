@@ -22,14 +22,17 @@ import { getAllowance } from 'web3/approval';
 import { formatTvl } from 'common/format';
 import { deposit } from 'web3/deposit';
 import { withdraw } from 'web3/withdraw';
+import { fetchBalance } from 'web3/fetchBalance';
 import NumberFormat from 'react-number-format';
+import { messageToast } from 'common/toasts';
+import { byDecimals, convertAmountToRawNumber } from 'common/bignumber';
 
 const Vault = (props) => {
   const { web3, address } = useConnectWallet();
   const { pool = {} } = props;
   const { depositTokenAddress, vaultAddress } = pool;
 
-  const [sharesBalance, setSharesBalance] = useState(new BigNumber(0));
+  const [sharesBalance, setSharesBalance] = useState(0);
   const [currentBalance, setCurrentBalance] = useState(0);
   const [depositedAmount, setDepositedAmount] = useState(0);
   const [sharesByDecimals, setSharesByDecimals] = useState(0);
@@ -76,10 +79,8 @@ const Vault = (props) => {
         depositTokenContract.methods
           .balanceOf(address)
           .call()
-          .then((balance) => {
-            var balanceBn = new BigNumber(balance);
-            const formattedBalance = balanceBn.dividedBy(decimalDivisor).toFormat(8);
-            setCurrentBalance(formattedBalance);
+          .then((data) => {
+            setCurrentBalance(byDecimals(new BigNumber(data)).toFormat(4));
           });
 
         vaultContract.methods
@@ -103,7 +104,8 @@ const Vault = (props) => {
               .call()
               .then((iouBalance) => {
                 var iouBalanceBn = new BigNumber(iouBalance);
-                setSharesBalance(iouBalanceBn);
+                setSharesBalance(byDecimals(iouBalanceBn.multipliedBy(new BigNumber(pool.pricePerFullShare))).toFormat(4));
+
                 // Number of deposit tokens inside the vault.
                 vaultContract.methods
                   .balance()
@@ -124,11 +126,26 @@ const Vault = (props) => {
               });
           });
       });
-  }, [web3, slowRefresh]);
+  }, [web3]);
 
   const handleDeposit = (e, isAll) => {
     const amount = isAll ? null : decimalDivisor.multipliedBy(amountToDeposit).toString();
-    deposit({ web3, address, vaultAddress, amount, isAll });
+    deposit({ web3, address, vaultAddress, amount, isAll })
+    .then((data) => {
+      messageToast('Your deposit was successful.');
+      setAmountToDeposit("");
+      fetchBalance({ web3, address, tokenAddress: depositTokenAddress }).then((data) => {
+        setCurrentBalance(byDecimals(data).toFormat(4));
+      });
+
+      fetchBalance({ web3, address, tokenAddress: vaultAddress }).then((data) => {
+        var dataBn = new BigNumber(data);
+        setSharesBalance(byDecimals(dataBn.multipliedBy(new BigNumber(pool.pricePerFullShare))).toFormat(4));
+      });
+    })
+    .catch((error) => {
+      messageToast('An error occurred while depositing to the vault.');
+    });
   };
 
   const handleWithdrawal = (e, isAll) => {
@@ -149,18 +166,6 @@ const Vault = (props) => {
     }
   };
 
-  function byDecimals(number, tokenDecimals = 18) {
-    const decimals = new BigNumber(10).exponentiatedBy(tokenDecimals);
-    let withDecimals = new BigNumber(number);
-
-    try {
-      withDecimals = withDecimals.dividedBy(decimals).decimalPlaces(tokenDecimals);
-    } catch (err) {
-      //console.log(err);
-    }
-    return withDecimals;
-  }
-
   const handleApproval = () => {
     approve(web3, address, depositTokenAddress, vaultAddress);
   };
@@ -174,13 +179,6 @@ const Vault = (props) => {
     setActiveTab(value);
   };
 
-  function convertAmountToRawNumber(value, decimals = 18) {
-    return new BigNumber(value)
-      .times(new BigNumber('10').pow(decimals))
-      .decimalPlaces(0, BigNumber.ROUND_DOWN)
-      .toString(10);
-  }
-
   return (
     <StyledCard>
       <VaultHeader pool={pool} tvl={formatTvl(tvl)} />
@@ -191,7 +189,7 @@ const Vault = (props) => {
             <StyledSecondary align="center">Wallet</StyledSecondary>
           </div>
           <div>
-            <div>{byDecimals(sharesBalance.multipliedBy(new BigNumber(pool.pricePerFullShare)), 18).toFormat(8)}</div>
+            <div>{sharesBalance}</div>
             <StyledSecondary align="center">Deposited</StyledSecondary>
           </div>
         </div>

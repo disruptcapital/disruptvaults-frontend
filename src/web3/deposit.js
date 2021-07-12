@@ -1,21 +1,14 @@
 import { vaultABI } from 'configure';
-import { transactionToast, messageToast } from 'common/toasts';
+import { transactionToast } from 'common/toasts';
 
-export const deposit = ({ web3, address, vaultAddress, amount, isAll }) => {
-  _deposit({ web3, address, vaultAddress, amount, isAll })
-    .then((data) => {
-      messageToast('Your deposit was successful.');
-      //update balances
-    })
-    .catch((error) => {
-      messageToast('An error occurred while depositing to the vault.');
-    });
+export const deposit = async ({ web3, address, vaultAddress, amount, isAll }) => {
+  const contract = new web3.eth.Contract(vaultABI, vaultAddress);
+  const data = await _deposit({ contract, address, amount, isAll });
+  return data;
 };
 
-const _deposit = ({ web3, address, vaultAddress, amount, isAll }) => {
+const _deposit = ({ contract, address, amount, isAll }) => {
   return new Promise((resolve, reject) => {
-    const contract = new web3.eth.Contract(vaultABI, vaultAddress);
-
     if (isAll) {
       contract.methods
         .depositAll()
