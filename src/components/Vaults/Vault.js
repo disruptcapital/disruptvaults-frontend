@@ -31,6 +31,8 @@ const Vault = (props) => {
   const { web3, address } = useConnectWallet();
   const { pool = {} } = props;
   const { depositTokenAddress, vaultAddress } = pool;
+	const[theDeposit, setTheDeposit] = useState(new BigNumber(0));
+	const[iouBalance, setIOUBalance] = useState(new BigNumber(0));
 
   const [sharesBalance, setSharesBalance] = useState(0);
   const [currentBalance, setCurrentBalance] = useState(0);
@@ -104,6 +106,7 @@ const Vault = (props) => {
               .call()
               .then((iouBalance) => {
                 var iouBalanceBn = new BigNumber(iouBalance);
+				setIOUBalance(iouBalanceBn);
                 setSharesBalance(byDecimals(iouBalanceBn.multipliedBy(new BigNumber(pool.pricePerFullShare))).toFormat(4));
 
                 // Number of deposit tokens inside the vault.
@@ -189,7 +192,7 @@ const Vault = (props) => {
             <StyledSecondary align="center">Wallet</StyledSecondary>
           </div>
           <div>
-            <div>{sharesBalance}</div>
+            <div>{byDecimals(iouBalance.multipliedBy(pricePerFullShare)).toFormat(4)}</div>
             <StyledSecondary align="center">Deposited</StyledSecondary>
           </div>
         </div>
