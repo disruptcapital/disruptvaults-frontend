@@ -25,16 +25,13 @@ import { withdraw } from 'web3/withdraw';
 import { fetchBalance } from 'web3/fetchBalance';
 import NumberFormat from 'react-number-format';
 import { messageToast } from 'common/toasts';
-import { byDecimals, convertAmountToRawNumber } from 'common/bignumber';
+import { byDecimals, convertAmountToRawNumber, isZero } from 'common/bignumber';
 
 const Vault = (props) => {
   const { web3, address } = useConnectWallet();
   const { pool = {} } = props;
   const { depositTokenAddress, vaultAddress } = pool;
-	const[theDeposit, setTheDeposit] = useState(new BigNumber(0));
-	const[iouBalance, setIOUBalance] = useState(new BigNumber(0));
-
-  const [sharesBalance, setSharesBalance] = useState(0);
+  const [iouBalance, setIOUBalance] = useState(new BigNumber(0));
   const [currentBalance, setCurrentBalance] = useState(0);
   const [depositedAmount, setDepositedAmount] = useState(0);
   const [sharesByDecimals, setSharesByDecimals] = useState(0);
@@ -82,7 +79,8 @@ const Vault = (props) => {
           .balanceOf(address)
           .call()
           .then((data) => {
-            setCurrentBalance(byDecimals(new BigNumber(data)).toFormat(4));
+            const curr = new BigNumber(data);
+            setCurrentBalance(curr.isZero() ? 0 : byDecimals(new BigNumber(data)).toFormat(4));
           });
 
         vaultContract.methods
@@ -106,8 +104,7 @@ const Vault = (props) => {
               .call()
               .then((iouBalance) => {
                 var iouBalanceBn = new BigNumber(iouBalance);
-				setIOUBalance(iouBalanceBn);
-                setSharesBalance(byDecimals(iouBalanceBn.multipliedBy(new BigNumber(pool.pricePerFullShare))).toFormat(4));
+                setIOUBalance(iouBalanceBn);
 
                 // Number of deposit tokens inside the vault.
                 vaultContract.methods
@@ -116,12 +113,15 @@ const Vault = (props) => {
                   .then((vaultBalance) => {
                     var vaultBalanceBn = new BigNumber(vaultBalance);
                     setTvl(vaultBalanceBn.dividedBy(decimalDivisor).toNumber());
+
                     setDepositedAmount(
-                      iouBalanceBn
-                        .dividedBy(totalSupplyBn)
-                        .multipliedBy(vaultBalanceBn)
-                        .dividedBy(decimalDivisor)
-                        .toNumber(),
+                      iouBalanceBn.isZero()
+                        ? 0
+                        : iouBalanceBn
+                            .dividedBy(totalSupplyBn)
+                            .multipliedBy(vaultBalanceBn)
+                            .dividedBy(decimalDivisor)
+                            .toNumber(),
                     );
                     let sharesbydec = byDecimals(vaultBalanceBn, shareDecimals);
                     setSharesByDecimals(sharesbydec);
@@ -129,26 +129,26 @@ const Vault = (props) => {
               });
           });
       });
-  }, [web3]);
+  }, [web3, slowRefresh]);
 
   const handleDeposit = (e, isAll) => {
     const amount = isAll ? null : decimalDivisor.multipliedBy(amountToDeposit).toString();
     deposit({ web3, address, vaultAddress, amount, isAll })
-    .then((data) => {
-      messageToast('Your deposit was successful.');
-      setAmountToDeposit("");
-      fetchBalance({ web3, address, tokenAddress: depositTokenAddress }).then((data) => {
-        setCurrentBalance(byDecimals(data).toFormat(4));
-      });
+      .then((data) => {
+        messageToast('Your deposit was successful.');
+        setAmountToDeposit('');
+        fetchBalance({ web3, address, tokenAddress: depositTokenAddress }).then((data) => {
+          setCurrentBalance(byDecimals(data).toFormat(4));
+        });
 
-      fetchBalance({ web3, address, tokenAddress: vaultAddress }).then((data) => {
-        var dataBn = new BigNumber(data);
-        setSharesBalance(byDecimals(dataBn.multipliedBy(new BigNumber(pool.pricePerFullShare))).toFormat(4));
+        fetchBalance({ web3, address, tokenAddress: vaultAddress }).then((data) => {
+          var dataBn = new BigNumber(data);
+          setIOUBalance(dataBn);
+        });
+      })
+      .catch((error) => {
+        messageToast('An error occurred while depositing to the vault.');
       });
-    })
-    .catch((error) => {
-      messageToast('An error occurred while depositing to the vault.');
-    });
   };
 
   const handleWithdrawal = (e, isAll) => {
@@ -157,15 +157,44 @@ const Vault = (props) => {
     if (!isAll) {
       const amountToWithdrawBN = new BigNumber(amountToWithdraw);
       const sharesAmount = amountToWithdrawBN.dividedBy(pricePerFullShare).decimalPlaces(18, BigNumber.ROUND_UP);
-  
+
       amount = convertAmountToRawNumber(sharesAmount, 18);
       if (sharesAmount.times(100).dividedBy(sharesByDecimals).isGreaterThan(99)) {
         withdrawAll = true;
         amount = null;
       }
-      withdraw({ web3, address, vaultAddress, amount, isAll: withdrawAll });
+      withdraw({ web3, address, vaultAddress, amount, isAll: withdrawAll })
+        .then((data) => {
+          messageToast('Your withdrawal was successful.');
+          setAmountToWithdraw('');
+          fetchBalance({ web3, address, tokenAddress: depositTokenAddress }).then((data) => {
+            setCurrentBalance(byDecimals(data).toFormat(4));
+          });
+
+          fetchBalance({ web3, address, tokenAddress: vaultAddress }).then((data) => {
+            var dataBn = new BigNumber(data);
+            setIOUBalance(dataBn);
+          });
+        })
+        .catch((error) => {
+          messageToast('An error occurred while withdrawing from the vault.');
+        });
     } else {
-      withdraw({ web3, address, vaultAddress, amount, isAll });
+      withdraw({ web3, address, vaultAddress, amount, isAll })
+        .then((data) => {
+          messageToast('Your withdrawal was successful.');
+          fetchBalance({ web3, address, tokenAddress: depositTokenAddress }).then((data) => {
+            setCurrentBalance(byDecimals(data).toFormat(4));
+          });
+
+          fetchBalance({ web3, address, tokenAddress: vaultAddress }).then((data) => {
+            var dataBn = new BigNumber(data);
+            setIOUBalance(dataBn);
+          });
+        })
+        .catch((error) => {
+          messageToast('An error occurred while withdrawing from the vault.');
+        });
     }
   };
 
@@ -186,7 +215,7 @@ const Vault = (props) => {
     <StyledCard>
       <VaultHeader pool={pool} tvl={formatTvl(tvl)} />
       <MDBCardBody>
-      <div className="d-flex justify-content-evenly mb-3">
+        <div className="d-flex justify-content-evenly mb-3">
           <div>
             <div>{currentBalance}</div>
             <StyledSecondary align="center">Wallet</StyledSecondary>
@@ -215,6 +244,7 @@ const Vault = (props) => {
                 <StyledNumberFormat
                   thousandSeparator={true}
                   className="form-control mb-3"
+                  disabled={currentBalance === 0}
                   value={amountToDeposit}
                   onValueChange={(values) => {
                     setAmountToDeposit(values.floatValue);
@@ -298,10 +328,12 @@ const Vault = (props) => {
           <div class="d-flex">
             {isAllowed ? (
               <>
-                <StyledButton onClick={handleDeposit} style={{ marginRight: '2px' }}>
+                <StyledButton onClick={handleDeposit} disabled={currentBalance === 0} style={{ marginRight: '2px' }}>
                   Deposit
                 </StyledButton>
-                <StyledButton onClick={(e) => handleDeposit(e, true)}>Deposit All</StyledButton>
+                <StyledButton onClick={(e) => handleDeposit(e, true)} disabled={currentBalance === 0}>
+                  Deposit All
+                </StyledButton>
               </>
             ) : (
               <StyledButton onClick={handleApproval}>Approve</StyledButton>
@@ -368,6 +400,10 @@ const StyledTabsLink = styled(MDBTabsLink)`
 
 const StyledNumberFormat = styled(NumberFormat)`
   color: ${({ theme }) => `${theme.text} !important`};
+  :disabled {
+    background-color: ${({ theme }) => `${theme.disabledBg} !important`};
+    opacity: 0.65;
+  }
 `;
 
 const StyledLabel = styled.label`

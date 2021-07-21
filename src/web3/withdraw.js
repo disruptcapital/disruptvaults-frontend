@@ -1,21 +1,14 @@
 import { vaultABI } from '../configure';
 import { transactionToast, messageToast } from 'common/toasts';
 
-export const withdraw = ({ web3, address, vaultAddress, amount, isAll }) => {
-  _withdraw({ web3, address, vaultAddress, amount, isAll })
-    .then((data) => {
-      messageToast('Your withdrawal was successful.');
-      //update balances
-    })
-    .catch((error) => {
-      messageToast('An error occurred while withdrawing from the vault.');
-    });
+export const withdraw = async ({ web3, address, vaultAddress, amount, isAll }) => {
+  const contract = new web3.eth.Contract(vaultABI, vaultAddress);
+  const data = await _withdraw({ contract, address, vaultAddress, amount, isAll });
+  return data;
 };
 
-const _withdraw = ({ web3, address, vaultAddress, amount, isAll }) => {
+const _withdraw = ({ contract, address, vaultAddress, amount, isAll }) => {
   return new Promise((resolve, reject) => {
-    const contract = new web3.eth.Contract(vaultABI, vaultAddress);
-
     if (isAll) {
       contract.methods
         .withdrawAll()

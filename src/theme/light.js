@@ -7,6 +7,7 @@ const lightColors = {
   bg: 'rgba(237, 237, 237, 0.5)',
   bgSecondary: '#FFFFFF',
   toastBorder: 'rgba(0, 0, 0, 0.3)',
+  disabledBg: '#cdcdcd',
 };
 
 const light = {

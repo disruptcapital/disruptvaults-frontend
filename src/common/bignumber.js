@@ -97,10 +97,7 @@ export function convertAmountFromRawNumber(value, decimals = 18) {
 }
 
 export function handleSignificantDecimals(value, decimals, buffer) {
-  if (
-    !new BigNumber(`${decimals}`).isInteger() ||
-    (buffer && !new BigNumber(`${buffer}`).isInteger())
-  ) {
+  if (!new BigNumber(`${decimals}`).isInteger() || (buffer && !new BigNumber(`${buffer}`).isInteger())) {
     return null;
   }
   buffer = buffer ? convertStringToNumber(buffer) : 3;
@@ -129,9 +126,7 @@ export function formatFixedDecimals(value, decimals) {
 export function formatInputDecimals(inputOne, inputTwo) {
   const _nativeAmountDecimalPlaces = countDecimalPlaces(inputTwo);
   const decimals = _nativeAmountDecimalPlaces > 8 ? _nativeAmountDecimalPlaces : 8;
-  const result = new BigNumber(formatFixedDecimals(inputOne, decimals))
-    .toFormat()
-    .replace(/,/g, '');
+  const result = new BigNumber(formatFixedDecimals(inputOne, decimals)).toFormat().replace(/,/g, '');
   return result;
 }
 

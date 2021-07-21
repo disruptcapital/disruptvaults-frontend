@@ -28,11 +28,15 @@ const VaultHeader = (props) => {
         <StyledSecondary className="mb-2">Uses: {tokenDescription}</StyledSecondary>
         <div className="d-flex justify-content-evenly">
           <div>
-            <div>999.99%</div>
+            <div>
+              <i>pending</i>
+            </div>
             <StyledSecondary align="center">APY</StyledSecondary>
           </div>
           <div>
-            <div>999.99%</div>
+            <div>
+              <i>pending</i>
+            </div>
             <StyledSecondary align="center">Daily</StyledSecondary>
           </div>
           <div>

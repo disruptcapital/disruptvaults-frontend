@@ -7,6 +7,7 @@ const darkColors = {
   bg: '#202124',
   bgSecondary: '#292a2d',
   toastBorder: 'rgba(255, 255, 255, 0.3)',
+  disabledBg: '#191919',
 };
 
 const dark = {
