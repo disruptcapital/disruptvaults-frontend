@@ -23,6 +23,8 @@ export const bscPools = [
     callFee: 0.5,
     buyTokenUrl:
       'https://exchange.pancakeswap.finance/#/swap?inputCurrency=0xD1102332a213E21faF78B69C03572031F3552c33&outputCurrency=0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
+	  routerAddress: "0x10ED43C718714eb63d5aA57B78B54704E256024E",
+	  busdDepositTokenPath: ["0x3a783A73148F3152e51864849493fe49D438aA94", "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c", "0xe9e7cea3dedca5984780bafc599bd69add087d56"]
   },
   {
     id: 'cake-DISRPTD_RBTCAKE',
@@ -48,31 +50,7 @@ export const bscPools = [
     callFee: 0.5,
     buyTokenUrl:
       'https://exchange.pancakeswap.finance/#/swap?inputCurrency=0xD1102332a213E21faF78B69C03572031F3552c33&outputCurrency=0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
-  },
-  {
-    id: 'bifi-maxi',
-    logo: 'images/single-assets/BIFI.png',
-    name: 'BIFI Maxi',
-    token: 'BIFI',
-    tokenDescription: 'Beefy.Finance',
-    depositTokenAddress: '0xCa3F508B8e4Dd382eE878A314789373D80A5190A',
-    //tokenAddress: '0xCa3F508B8e4Dd382eE878A314789373D80A5190A',
-    tokenDecimals: 18,
-    tokenDescriptionUrl: 'https://docs.beefy.finance/beefyfinance/products/bifi-maxi',
-    earnedToken: 'mooBIFI',
-    earnedTokenAddress: '0xf7069e41C57EcC5F122093811d8c75bdB5f7c14e',
-    vaultAddress: '0xf7069e41C57EcC5F122093811d8c75bdB5f7c14e',
-    //earnContractAddress: '0xf7069e41C57EcC5F122093811d8c75bdB5f7c14e',
-    pricePerFullShare: 1,
-    tvl: 0,
-    oracle: 'tokens',
-    oracleId: 'BIFI',
-    oraclePrice: 0,
-    depositsPaused: false,
-    status: 'active',
-    platform: 'Beefy.Finance',
-    assets: ['BIFI'],
-    callFee: 0.5,
-    buyTokenUrl: 'https://app.1inch.io/#/56/swap/BNB/BIFI',
-  },
+	  routerAddress: "0x10ED43C718714eb63d5aA57B78B54704E256024E",
+	  busdDepositTokenPath: ["0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82", "0xe9e7cea3dedca5984780bafc599bd69add087d56"]
+  }  
 ];

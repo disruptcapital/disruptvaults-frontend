@@ -24,6 +24,7 @@ import { formatTvl } from 'common/format';
 import { deposit } from 'web3/deposit';
 import { withdraw } from 'web3/withdraw';
 import { fetchBalance } from 'web3/fetchBalance';
+import { fetchPrice } from 'web3/fetchPrice';
 import NumberFormat from 'react-number-format';
 import { messageToast } from 'common/toasts';
 import { byDecimals, convertAmountToRawNumber, isZero } from 'common/bignumber';
@@ -32,7 +33,7 @@ const Vault = (props) =>
 {
 	const { web3, address } = useConnectWallet();
 	const { pool = {} } = props;
-	const { depositTokenAddress, vaultAddress } = pool;
+	const { depositTokenAddress, vaultAddress, busdDepositTokenPath, routerAddress } = pool;
 	const [iouBalance, setIOUBalance] = useState(new BigNumber(0));
 	const [currentBalance, setCurrentBalance] = useState(0);
 	const [depositedAmount, setDepositedAmount] = useState(0);
@@ -42,6 +43,7 @@ const Vault = (props) =>
 	const [isAllowed, setIsAllowed] = useState(null);
 	const [decimalDivisor, setDecimalDivisor] = useState(new BigNumber(10).pow(18));
 	const [tvl, setTvl] = useState(0);
+	const [tvlPrice, setTVLPrice] = useState(new BigNumber(0));
 	const [pricePerFullShare, setPricePerFullShare] = useState(new BigNumber());
 	const [shareDecimals, setShareDecimals] = useState(18);
 	const [totalSupply, setTotalSupply] = useState(new BigNumber(0));
@@ -66,6 +68,22 @@ const Vault = (props) =>
 		}
 	}, [slowRefresh, web3, address, depositTokenAddress, vaultAddress]);
 
+	useEffect(() => {
+		async function update({web3, address, routerAddress, tvl, busdDepositTokenPath })
+		{
+			if(tvl && busdDepositTokenPath)
+			{
+				const price = await fetchPrice({web3, address, routerAddress, tvl, busdDepositTokenPath  });
+				setTVLPrice(price);
+			}
+			
+		}
+
+		if (web3)
+		{
+			update({ web3, address, routerAddress, tvl, busdDepositTokenPath });
+		}
+	}, [slowRefresh, web3, address, routerAddress, tvl, busdDepositTokenPath]);
 
 	// Updates vault deposited balance and TVL
 	useEffect(() =>
@@ -261,7 +279,7 @@ const Vault = (props) =>
 
 	return (
 		<StyledCard>
-			<VaultHeader pool={pool} tvl={formatTvl(tvl)} />
+			<VaultHeader pool={pool} tvl={formatTvl(tvlPrice)} />
 			<MDBCardBody>
 				<div className="d-flex justify-content-evenly mb-3">
 					<div>
