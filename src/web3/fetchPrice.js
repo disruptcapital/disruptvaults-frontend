@@ -1,10 +1,10 @@
 import { uniswapV2RouterABI } from 'configure';
 import BigNumber from 'bignumber.js';
 
-export const fetchPrice = async ({ web3, address, routerAddress, tvl, busdDepositTokenPath }) => {
+export const fetchPrice = async ({ web3, address, routerAddress, t, busdDepositTokenPath }) => {
 
   const contract = new web3.eth.Contract(uniswapV2RouterABI, routerAddress);
-  const amounts = await contract.methods.getAmountsOut(tvl, busdDepositTokenPath).call({ from: address });
+  const amounts = await contract.methods.getAmountsOut(t, busdDepositTokenPath).call({ from: address });
 
-  return new BigNumber(amounts[amounts.length-1]).toNumber();
+  return new BigNumber(amounts[amounts.length-1]);
 };

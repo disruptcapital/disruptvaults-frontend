@@ -72,8 +72,9 @@ const Vault = (props) =>
 		async function update({web3, address, routerAddress, tvl, busdDepositTokenPath })
 		{
 			if(tvl && busdDepositTokenPath)
-			{
-				const price = await fetchPrice({web3, address, routerAddress, tvl, busdDepositTokenPath  });
+			{	
+				const t = convertAmountToRawNumber(tvl, 18);
+				const price = await fetchPrice({web3, address, routerAddress, t, busdDepositTokenPath  });
 				setTVLPrice(price);
 			}
 			
@@ -279,7 +280,7 @@ const Vault = (props) =>
 
 	return (
 		<StyledCard>
-			<VaultHeader pool={pool} tvl={formatTvl(tvlPrice)} />
+			<VaultHeader pool={pool} tvl={formatTvl(byDecimals(tvlPrice))} />
 			<MDBCardBody>
 				<div className="d-flex justify-content-evenly mb-3">
 					<div>
