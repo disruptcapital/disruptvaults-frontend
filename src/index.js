@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import reportWebVitals from './reportWebVitals';
 import AppWrapper from './App';
+import BigNumber from 'bignumber.js';
+BigNumber.config({ EXPONENTIAL_AT: 100 });
 
 ReactDOM.render(
   <React.StrictMode>
