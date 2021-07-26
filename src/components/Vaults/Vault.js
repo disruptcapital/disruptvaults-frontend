@@ -41,7 +41,6 @@ const Vault = (props) =>
 	const [amountToDeposit, setAmountToDeposit] = useState();
 	const [amountToWithdraw, setAmountToWithdraw] = useState();
 	const [isAllowed, setIsAllowed] = useState(null);
-	const [decimalDivisor, setDecimalDivisor] = useState(new BigNumber(10).pow(18));
 	const [tvl, setTvl] = useState(0);
 	const [tvlPrice, setTVLPrice] = useState(new BigNumber(0));
 	const [pricePerFullShare, setPricePerFullShare] = useState(new BigNumber());
@@ -161,14 +160,14 @@ const Vault = (props) =>
 					.then((iouBalance) =>
 					{
 						var iouBalanceBn = new BigNumber(iouBalance);
-						setIOUBalance(iouBalanceBn);
+						setIOUBalance(iouBalanceBn);	
 					});
 			});
 	}, [web3, slowRefresh]);
 
 	const handleDeposit = (e, isAll) =>
 	{
-		const amount = isAll ? null : decimalDivisor.multipliedBy(amountToDeposit).toString();
+		const amount = isAll ? null : convertAmountToRawNumber(amountToDeposit, 18).toString();
 		deposit({ web3, address, vaultAddress, amount, isAll })
 			.then((data) =>
 			{
@@ -184,6 +183,8 @@ const Vault = (props) =>
 					var dataBn = new BigNumber(data);
 					setIOUBalance(dataBn);
 				});
+
+				
 			})
 			.catch((error) =>
 			{
