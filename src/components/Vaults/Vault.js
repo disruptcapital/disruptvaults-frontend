@@ -45,7 +45,6 @@ const Vault = (props) =>
 	const [tvl, setTvl] = useState(0);
 	const [tvlPrice, setTVLPrice] = useState(new BigNumber(0));
 	const [pricePerFullShare, setPricePerFullShare] = useState(new BigNumber());
-	const [shareDecimals, setShareDecimals] = useState(18);
 	const [totalSupply, setTotalSupply] = useState(new BigNumber(0));
 	const { execute: approve, allowance } = useApprove();
 	useEffect(() =>
@@ -68,16 +67,17 @@ const Vault = (props) =>
 		}
 	}, [slowRefresh, web3, address, depositTokenAddress, vaultAddress]);
 
-	useEffect(() => {
-		async function update({web3, address, routerAddress, tvl, busdDepositTokenPath })
+	useEffect(() =>
+	{
+		async function update({ web3, address, routerAddress, tvl, busdDepositTokenPath })
 		{
-			if(tvl && busdDepositTokenPath)
-			{	
+			if (tvl && busdDepositTokenPath)
+			{
 				const t = convertAmountToRawNumber(tvl, 18);
-				const price = await fetchPrice({web3, address, routerAddress, t, busdDepositTokenPath  });
+				const price = await fetchPrice({ web3, address, routerAddress, t, busdDepositTokenPath });
 				setTVLPrice(price);
 			}
-			
+
 		}
 
 		if (web3)
@@ -127,53 +127,41 @@ const Vault = (props) =>
 		const depositTokenContract = new web3.eth.Contract(erc20ABI, pool.depositTokenAddress);
 		const vaultContract = new web3.eth.Contract(vaultABI, pool.vaultAddress);
 
-		// Number of decimals for deposit token
-		depositTokenContract.methods
-			.decimals()
-			.call()
-			.then((dec) =>
-			{
-				var decimalsBn = new BigNumber(dec);
-				setShareDecimals(parseInt(dec));
-				setDecimalDivisor(new BigNumber(10).pow(decimalsBn.toNumber()));
 
-				depositTokenContract.methods
+		depositTokenContract.methods
+			.balanceOf(address)
+			.call()
+			.then((data) =>
+			{
+				const curr = new BigNumber(data);
+				setCurrentBalance(curr.isZero() ? 0 : byDecimals(new BigNumber(data)).toFormat(4));
+			});
+
+		vaultContract.methods
+			.getPricePerFullShare()
+			.call()
+			.then((ppfs) =>
+			{
+				let ppfsBN = new BigNumber(ppfs);
+				setPricePerFullShare(byDecimals(ppfsBN));
+			});
+
+		// Total supply of IOU tokens
+		vaultContract.methods
+			.totalSupply()
+			.call()
+			.then((totalSupply) =>
+			{
+				var totalSupplyBn = new BigNumber(totalSupply);
+				setTotalSupply(totalSupplyBn);
+				// IOU tokens owned by user
+				vaultContract.methods
 					.balanceOf(address)
 					.call()
-					.then((data) =>
+					.then((iouBalance) =>
 					{
-						const curr = new BigNumber(data);
-						setCurrentBalance(curr.isZero() ? 0 : byDecimals(new BigNumber(data)).toFormat(4));
-					});
-
-				vaultContract.methods
-					.getPricePerFullShare()
-					.call()
-					.then((ppfs) =>
-					{
-						let ppfsBN = new BigNumber(ppfs);
-						setPricePerFullShare(byDecimals(ppfsBN));
-					});
-
-				// Total supply of IOU tokens
-				vaultContract.methods
-					.totalSupply()
-					.call()
-					.then((totalSupply) =>
-					{
-						var totalSupplyBn = new BigNumber(totalSupply);
-						setTotalSupply(totalSupplyBn);
-						// IOU tokens owned by user
-						vaultContract.methods
-							.balanceOf(address)
-							.call()
-							.then((iouBalance) =>
-							{
-								var iouBalanceBn = new BigNumber(iouBalance);
-								setIOUBalance(iouBalanceBn);
-
-
-							});
+						var iouBalanceBn = new BigNumber(iouBalance);
+						setIOUBalance(iouBalanceBn);
 					});
 			});
 	}, [web3, slowRefresh]);
