@@ -23,8 +23,12 @@ export const bscPools = [
     callFee: 0.5,
     buyTokenUrl:
       'https://exchange.pancakeswap.finance/#/swap?inputCurrency=0xD1102332a213E21faF78B69C03572031F3552c33&outputCurrency=0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
-	  routerAddress: "0x10ED43C718714eb63d5aA57B78B54704E256024E",
-	  busdDepositTokenPath: ["0x3a783A73148F3152e51864849493fe49D438aA94", "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c", "0xe9e7cea3dedca5984780bafc599bd69add087d56"]
+    routerAddress: '0x10ED43C718714eb63d5aA57B78B54704E256024E',
+    busdDepositTokenPath: [
+      '0x3a783A73148F3152e51864849493fe49D438aA94',
+      '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
+      '0xe9e7cea3dedca5984780bafc599bd69add087d56',
+    ],
   },
   {
     id: 'cake-DISRPTD_RBTCAKE',
@@ -50,7 +54,7 @@ export const bscPools = [
     callFee: 0.5,
     buyTokenUrl:
       'https://exchange.pancakeswap.finance/#/swap?inputCurrency=0xD1102332a213E21faF78B69C03572031F3552c33&outputCurrency=0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
-	  routerAddress: "0x10ED43C718714eb63d5aA57B78B54704E256024E",
-	  busdDepositTokenPath: ["0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82", "0xe9e7cea3dedca5984780bafc599bd69add087d56"]
-  }  
+    routerAddress: '0x10ED43C718714eb63d5aA57B78B54704E256024E',
+    busdDepositTokenPath: ['0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82', '0xe9e7cea3dedca5984780bafc599bd69add087d56'],
+  },
 ];

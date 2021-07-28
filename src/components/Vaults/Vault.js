@@ -2,17 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useConnectWallet } from 'features/home/redux/hooks';
 import { erc20ABI, vaultABI } from 'configure/abi';
 import BigNumber from 'bignumber.js';
-import
-{
-	MDBCard,
-	MDBCardBody,
-	MDBBtn,
-	MDBTabs,
-	MDBTabsItem,
-	MDBTabsLink,
-	MDBTabsContent,
-	MDBTabsPane,
-	MDBInput,
+import {
+  MDBCard,
+  MDBCardBody,
+  MDBBtn,
+  MDBTabs,
+  MDBTabsItem,
+  MDBTabsLink,
+  MDBTabsContent,
+  MDBTabsPane,
+  MDBInput,
 } from 'mdb-react-ui-kit';
 import styled from 'styled-components';
 import VaultHeader from 'features/vault/components/VaultHeader';
@@ -29,388 +28,337 @@ import NumberFormat from 'react-number-format';
 import { messageToast } from 'common/toasts';
 import { byDecimals, convertAmountToRawNumber, isZero } from 'common/bignumber';
 
-const Vault = (props) =>
-{
-	const { web3, address } = useConnectWallet();
-	const { pool = {} } = props;
-	const { depositTokenAddress, vaultAddress, busdDepositTokenPath, routerAddress } = pool;
-	const [iouBalance, setIOUBalance] = useState(new BigNumber(0));
-	const [currentBalance, setCurrentBalance] = useState(0);
-	const [depositedAmount, setDepositedAmount] = useState(0);
-	const [sharesByDecimals, setSharesByDecimals] = useState(0);
-	const [amountToDeposit, setAmountToDeposit] = useState();
-	const [amountToWithdraw, setAmountToWithdraw] = useState();
-	const [isAllowed, setIsAllowed] = useState(null);
-	const [tvl, setTvl] = useState(0);
-	const [tvlPrice, setTVLPrice] = useState(new BigNumber(0));
-	const [pricePerFullShare, setPricePerFullShare] = useState(new BigNumber());
-	const [totalSupply, setTotalSupply] = useState(new BigNumber(0));
-	const { execute: approve, allowance } = useApprove();
-	useEffect(() =>
-	{
-		setIsAllowed(allowance > 0);
-	}, [allowance]);
+const Vault = (props) => {
+  const { web3, address } = useConnectWallet();
+  const { pool = {} } = props;
+  const { depositTokenAddress, vaultAddress, busdDepositTokenPath, routerAddress } = pool;
+  const [iouBalance, setIOUBalance] = useState(new BigNumber(0));
+  const [currentBalance, setCurrentBalance] = useState(0);
+  const [depositedAmount, setDepositedAmount] = useState(0);
+  const [sharesByDecimals, setSharesByDecimals] = useState(0);
+  const [amountToDeposit, setAmountToDeposit] = useState();
+  const [amountToWithdraw, setAmountToWithdraw] = useState();
+  const [isAllowed, setIsAllowed] = useState(null);
+  const [tvl, setTvl] = useState(0);
+  const [tvlPrice, setTVLPrice] = useState(new BigNumber(0));
+  const [pricePerFullShare, setPricePerFullShare] = useState(new BigNumber());
+  const [totalSupply, setTotalSupply] = useState(new BigNumber(0));
+  const { execute: approve, allowance } = useApprove();
+  useEffect(() => {
+    setIsAllowed(allowance > 0);
+  }, [allowance]);
 
-	const { slowRefresh } = useRefresh();
-	useEffect(() =>
-	{
-		async function update({ web3, address, depositTokenAddress, vaultAddress })
-		{
-			const allowance = await getAllowance({ web3, address, depositTokenAddress, vaultAddress });
-			setIsAllowed(allowance > 0);
-		}
+  const { slowRefresh } = useRefresh();
+  useEffect(() => {
+    async function update({ web3, address, depositTokenAddress, vaultAddress }) {
+      const allowance = await getAllowance({ web3, address, depositTokenAddress, vaultAddress });
+      setIsAllowed(allowance > 0);
+    }
 
-		if (web3)
-		{
-			update({ web3, address, depositTokenAddress, vaultAddress });
-		}
-	}, [slowRefresh, web3, address, depositTokenAddress, vaultAddress]);
+    if (web3) {
+      update({ web3, address, depositTokenAddress, vaultAddress });
+    }
+  }, [slowRefresh, web3, address, depositTokenAddress, vaultAddress]);
 
-	useEffect(() =>
-	{
-		async function update({ web3, address, routerAddress, tvl, busdDepositTokenPath })
-		{
-			if (tvl && busdDepositTokenPath)
-			{
-				const t = convertAmountToRawNumber(tvl, 18);
-				const price = await fetchPrice({ web3, address, routerAddress, t, busdDepositTokenPath });
-				setTVLPrice(price);
-			}
+  useEffect(() => {
+    async function update({ web3, address, routerAddress, tvl, busdDepositTokenPath }) {
+      if (tvl && busdDepositTokenPath) {
+        const t = convertAmountToRawNumber(tvl, 18);
+        const price = await fetchPrice({ web3, address, routerAddress, t, busdDepositTokenPath });
+        setTVLPrice(price);
+      }
+    }
 
-		}
+    if (web3) {
+      update({ web3, address, routerAddress, tvl, busdDepositTokenPath });
+    }
+  }, [slowRefresh, web3, address, routerAddress, tvl, busdDepositTokenPath]);
 
-		if (web3)
-		{
-			update({ web3, address, routerAddress, tvl, busdDepositTokenPath });
-		}
-	}, [slowRefresh, web3, address, routerAddress, tvl, busdDepositTokenPath]);
+  // Updates vault deposited balance and TVL
+  useEffect(() => {
+    async function update({ web3, vaultAddress, iouBalance, totalSupply }) {
+      const vaultContract = new web3.eth.Contract(vaultABI, vaultAddress);
+      // Number of deposit tokens inside the vault.
+      const vaultBalance = await vaultContract.methods.balance().call();
 
-	// Updates vault deposited balance and TVL
-	useEffect(() =>
-	{
+      const vaultBalanceBn = new BigNumber(vaultBalance);
+      setTvl(byDecimals(vaultBalanceBn).toNumber());
 
-		async function update({ web3, vaultAddress, iouBalance, totalSupply })
-		{
-			const vaultContract = new web3.eth.Contract(vaultABI, vaultAddress);
-			// Number of deposit tokens inside the vault.
-			const vaultBalance = await vaultContract.methods
-				.balance()
-				.call();
+      setDepositedAmount(
+        iouBalance.isZero() || totalSupply.isZero()
+          ? 0
+          : byDecimals(iouBalance.multipliedBy(vaultBalanceBn).dividedBy(totalSupply)).toNumber(),
+      );
+      let sharesbydec = byDecimals(vaultBalanceBn);
+      setSharesByDecimals(sharesbydec);
+    }
+    if (web3) {
+      update({ web3, vaultAddress, iouBalance, totalSupply });
+    }
+  }, [slowRefresh, web3, vaultAddress, iouBalance, totalSupply]);
 
-			const vaultBalanceBn = new BigNumber(vaultBalance);
-			setTvl(byDecimals(vaultBalanceBn).toNumber());
+  useEffect(() => {
+    if (!web3) return;
 
-			setDepositedAmount(
-				iouBalance.isZero() || totalSupply.isZero()
-					? 0
-					: byDecimals(iouBalance
-						.multipliedBy(vaultBalanceBn)
-						.dividedBy(totalSupply))
-						.toNumber(),
-			);
-			let sharesbydec = byDecimals(vaultBalanceBn);
-			setSharesByDecimals(sharesbydec);
+    const depositTokenContract = new web3.eth.Contract(erc20ABI, pool.depositTokenAddress);
+    const vaultContract = new web3.eth.Contract(vaultABI, pool.vaultAddress);
 
+    depositTokenContract.methods
+      .balanceOf(address)
+      .call()
+      .then((data) => {
+        const curr = new BigNumber(data);
+        setCurrentBalance(curr.isZero() ? 0 : byDecimals(new BigNumber(data)).toFormat(4, BigNumber.ROUND_DOWN));
+      });
 
-		}
-		if (web3)
-		{
-			update({ web3, vaultAddress, iouBalance, totalSupply });
-		}
-	}, [slowRefresh, web3, vaultAddress, iouBalance, totalSupply]);
+    vaultContract.methods
+      .getPricePerFullShare()
+      .call()
+      .then((ppfs) => {
+        let ppfsBN = new BigNumber(ppfs);
+        setPricePerFullShare(byDecimals(ppfsBN));
+      });
 
-	useEffect(() =>
-	{
-		if (!web3) return;
+    // Total supply of IOU tokens
+    vaultContract.methods
+      .totalSupply()
+      .call()
+      .then((totalSupply) => {
+        var totalSupplyBn = new BigNumber(totalSupply);
+        setTotalSupply(totalSupplyBn);
+        // IOU tokens owned by user
+        vaultContract.methods
+          .balanceOf(address)
+          .call()
+          .then((iouBalance) => {
+            var iouBalanceBn = new BigNumber(iouBalance);
+            setIOUBalance(iouBalanceBn);
+          });
+      });
+  }, [web3, slowRefresh]);
 
-		const depositTokenContract = new web3.eth.Contract(erc20ABI, pool.depositTokenAddress);
-		const vaultContract = new web3.eth.Contract(vaultABI, pool.vaultAddress);
+  const handleDeposit = (e, isAll) => {
+    const amount = isAll ? null : convertAmountToRawNumber(amountToDeposit, 18).toString();
+    deposit({ web3, address, vaultAddress, amount, isAll })
+      .then((data) => {
+        messageToast('Your deposit was successful.');
+        setAmountToDeposit('');
+        fetchBalance({ web3, address, tokenAddress: depositTokenAddress }).then((data) => {
+          setCurrentBalance(byDecimals(data).toFormat(4, BigNumber.ROUND_DOWN));
+        });
 
+        fetchBalance({ web3, address, tokenAddress: vaultAddress }).then((data) => {
+          var dataBn = new BigNumber(data);
+          setIOUBalance(dataBn);
+        });
+      })
+      .catch((error) => {
+        messageToast('An error occurred while depositing to the vault.');
+      });
+  };
 
-		depositTokenContract.methods
-			.balanceOf(address)
-			.call()
-			.then((data) =>
-			{
-				const curr = new BigNumber(data);
-				setCurrentBalance(curr.isZero() ? 0 : byDecimals(new BigNumber(data)).toFormat(4));
-			});
+  const handleWithdrawal = (e, isAll) => {
+    let withdrawAll = isAll;
+    let amount = null;
+    if (!isAll) {
+      const amountToWithdrawBN = new BigNumber(amountToWithdraw);
+      const sharesAmount = amountToWithdrawBN.dividedBy(pricePerFullShare).decimalPlaces(18, BigNumber.ROUND_UP);
 
-		vaultContract.methods
-			.getPricePerFullShare()
-			.call()
-			.then((ppfs) =>
-			{
-				let ppfsBN = new BigNumber(ppfs);
-				setPricePerFullShare(byDecimals(ppfsBN));
-			});
+      amount = convertAmountToRawNumber(sharesAmount, 18);
+      if (sharesAmount.times(100).dividedBy(sharesByDecimals).isGreaterThan(99)) {
+        withdrawAll = true;
+        amount = null;
+      }
+      withdraw({ web3, address, vaultAddress, amount, isAll: withdrawAll })
+        .then((data) => {
+          messageToast('Your withdrawal was successful.');
+          setAmountToWithdraw('');
+          fetchBalance({ web3, address, tokenAddress: depositTokenAddress }).then((data) => {
+            setCurrentBalance(byDecimals(data).toFormat(4, BigNumber.ROUND_DOWN));
+          });
 
-		// Total supply of IOU tokens
-		vaultContract.methods
-			.totalSupply()
-			.call()
-			.then((totalSupply) =>
-			{
-				var totalSupplyBn = new BigNumber(totalSupply);
-				setTotalSupply(totalSupplyBn);
-				// IOU tokens owned by user
-				vaultContract.methods
-					.balanceOf(address)
-					.call()
-					.then((iouBalance) =>
-					{
-						var iouBalanceBn = new BigNumber(iouBalance);
-						setIOUBalance(iouBalanceBn);	
-					});
-			});
-	}, [web3, slowRefresh]);
+          fetchBalance({ web3, address, tokenAddress: vaultAddress }).then((data) => {
+            var dataBn = new BigNumber(data);
+            setIOUBalance(dataBn);
+          });
+        })
+        .catch((error) => {
+          messageToast('An error occurred while withdrawing from the vault.');
+        });
+    } else {
+      withdraw({ web3, address, vaultAddress, amount, isAll })
+        .then((data) => {
+          messageToast('Your withdrawal was successful.');
+          fetchBalance({ web3, address, tokenAddress: depositTokenAddress }).then((data) => {
+            setCurrentBalance(byDecimals(data).toFormat(4, BigNumber.ROUND_DOWN));
+          });
 
-	const handleDeposit = (e, isAll) =>
-	{
-		const amount = isAll ? null : convertAmountToRawNumber(amountToDeposit, 18).toString();
-		deposit({ web3, address, vaultAddress, amount, isAll })
-			.then((data) =>
-			{
-				messageToast('Your deposit was successful.');
-				setAmountToDeposit('');
-				fetchBalance({ web3, address, tokenAddress: depositTokenAddress }).then((data) =>
-				{
-					setCurrentBalance(byDecimals(data).toFormat(4));
-				});
+          fetchBalance({ web3, address, tokenAddress: vaultAddress }).then((data) => {
+            var dataBn = new BigNumber(data);
+            setIOUBalance(dataBn);
+          });
+        })
+        .catch((error) => {
+          messageToast('An error occurred while withdrawing from the vault.');
+        });
+    }
+  };
 
-				fetchBalance({ web3, address, tokenAddress: vaultAddress }).then((data) =>
-				{
-					var dataBn = new BigNumber(data);
-					setIOUBalance(dataBn);
-				});
+  const handleApproval = () => {
+    approve(web3, address, depositTokenAddress, vaultAddress);
+  };
 
-				
-			})
-			.catch((error) =>
-			{
-				messageToast('An error occurred while depositing to the vault.');
-			});
-	};
+  const [activeTab, setActiveTab] = useState('deposit');
 
-	const handleWithdrawal = (e, isAll) =>
-	{
-		let withdrawAll = isAll;
-		let amount = null;
-		if (!isAll)
-		{
-			const amountToWithdrawBN = new BigNumber(amountToWithdraw);
-			const sharesAmount = amountToWithdrawBN.dividedBy(pricePerFullShare).decimalPlaces(18, BigNumber.ROUND_UP);
+  const handleTabClick = (value) => {
+    if (value === activeTab) {
+      return;
+    }
+    setActiveTab(value);
+  };
 
-			amount = convertAmountToRawNumber(sharesAmount, 18);
-			if (sharesAmount.times(100).dividedBy(sharesByDecimals).isGreaterThan(99))
-			{
-				withdrawAll = true;
-				amount = null;
-			}
-			withdraw({ web3, address, vaultAddress, amount, isAll: withdrawAll })
-				.then((data) =>
-				{
-					messageToast('Your withdrawal was successful.');
-					setAmountToWithdraw('');
-					fetchBalance({ web3, address, tokenAddress: depositTokenAddress }).then((data) =>
-					{
-						setCurrentBalance(byDecimals(data).toFormat(4));
-					});
+  return (
+    <StyledCard>
+      <VaultHeader pool={pool} tvl={formatTvl(byDecimals(tvlPrice))} />
+      <MDBCardBody>
+        <div className="d-flex justify-content-evenly mb-3">
+          <div>
+            <div>{currentBalance}</div>
+            <StyledSecondary align="center">Wallet</StyledSecondary>
+          </div>
+          <div>
+            <div>{byDecimals(iouBalance.multipliedBy(pricePerFullShare)).toFormat(4, BigNumber.ROUND_DOWN)}</div>
+            <StyledSecondary align="center">Deposited</StyledSecondary>
+          </div>
+        </div>
+        <MDBTabs fill className="mb-3">
+          <MDBTabsItem>
+            <StyledTabsLink onClick={() => handleTabClick('deposit')} active={activeTab === 'deposit'}>
+              Deposit
+            </StyledTabsLink>
+          </MDBTabsItem>
+          <MDBTabsItem>
+            <StyledTabsLink onClick={() => handleTabClick('withdrawal')} active={activeTab === 'withdrawal'}>
+              Withdrawal
+            </StyledTabsLink>
+          </MDBTabsItem>
+        </MDBTabs>
+        <MDBTabsContent>
+          <MDBTabsPane show={activeTab === 'deposit'}>
+            {isAllowed && (
+              <div class="form-outline">
+                <StyledNumberFormat
+                  thousandSeparator={true}
+                  className="form-control mb-3"
+                  disabled={currentBalance === 0}
+                  value={amountToDeposit}
+                  onValueChange={(values) => {
+                    setAmountToDeposit(values.floatValue);
+                  }}
+                />
 
-					fetchBalance({ web3, address, tokenAddress: vaultAddress }).then((data) =>
-					{
-						var dataBn = new BigNumber(data);
-						setIOUBalance(dataBn);
-					});
-				})
-				.catch((error) =>
-				{
-					messageToast('An error occurred while withdrawing from the vault.');
-				});
-		} else
-		{
-			withdraw({ web3, address, vaultAddress, amount, isAll })
-				.then((data) =>
-				{
-					messageToast('Your withdrawal was successful.');
-					fetchBalance({ web3, address, tokenAddress: depositTokenAddress }).then((data) =>
-					{
-						setCurrentBalance(byDecimals(data).toFormat(4));
-					});
+                <StyledLabel
+                  className="form-label"
+                  style={
+                    amountToDeposit !== undefined
+                      ? { transform: 'translateY(-1rem) translateY(0.1rem) scale(0.8)' }
+                      : {}
+                  }
+                >
+                  Deposit Amount
+                </StyledLabel>
+                <div class="form-notch">
+                  <div class="form-notch-leading"></div>
+                  <div
+                    class="form-notch-middle"
+                    style={
+                      amountToDeposit !== undefined ? { borderTop: 'none', width: '100.8px' } : { width: '100.8px' }
+                    }
+                  ></div>
+                  <div class="form-notch-trailing"></div>
+                </div>
+              </div>
+            )}
+            <StyledDescription>
+              Deposit fee: 0.0%
+              <br />
+              Withdrawal fee: 0.0%
+            </StyledDescription>
+            <StyledSecondary align="center">
+              You will receive TUSK-BNB token as a receipt for your deposited TUSK-BNB LP assets. This token is needed
+              to withdraw your TUSK-BNB LP.
+            </StyledSecondary>
+          </MDBTabsPane>
+          <MDBTabsPane show={activeTab === 'withdrawal'}>
+            {isAllowed && (
+              <div class="form-outline">
+                <StyledNumberFormat
+                  thousandSeparator={true}
+                  disabled={depositedAmount === 0}
+                  className="form-control mb-3"
+                  value={amountToWithdraw}
+                  onValueChange={(values) => {
+                    setAmountToWithdraw(values.floatValue);
+                  }}
+                />
 
-					fetchBalance({ web3, address, tokenAddress: vaultAddress }).then((data) =>
-					{
-						var dataBn = new BigNumber(data);
-						setIOUBalance(dataBn);
-					});
-				})
-				.catch((error) =>
-				{
-					messageToast('An error occurred while withdrawing from the vault.');
-				});
-		}
-	};
-
-	const handleApproval = () =>
-	{
-		approve(web3, address, depositTokenAddress, vaultAddress);
-	};
-
-	const [activeTab, setActiveTab] = useState('deposit');
-
-	const handleTabClick = (value) =>
-	{
-		if (value === activeTab)
-		{
-			return;
-		}
-		setActiveTab(value);
-	};
-
-	return (
-		<StyledCard>
-			<VaultHeader pool={pool} tvl={formatTvl(byDecimals(tvlPrice))} />
-			<MDBCardBody>
-				<div className="d-flex justify-content-evenly mb-3">
-					<div>
-						<div>{currentBalance}</div>
-						<StyledSecondary align="center">Wallet</StyledSecondary>
-					</div>
-					<div>
-						<div>{byDecimals(iouBalance.multipliedBy(pricePerFullShare)).toFormat(4)}</div>
-						<StyledSecondary align="center">Deposited</StyledSecondary>
-					</div>
-				</div>
-				<MDBTabs fill className="mb-3">
-					<MDBTabsItem>
-						<StyledTabsLink onClick={() => handleTabClick('deposit')} active={activeTab === 'deposit'}>
-							Deposit
-						</StyledTabsLink>
-					</MDBTabsItem>
-					<MDBTabsItem>
-						<StyledTabsLink onClick={() => handleTabClick('withdrawal')} active={activeTab === 'withdrawal'}>
-							Withdrawal
-						</StyledTabsLink>
-					</MDBTabsItem>
-				</MDBTabs>
-				<MDBTabsContent>
-					<MDBTabsPane show={activeTab === 'deposit'}>
-						{isAllowed && (
-							<div class="form-outline">
-								<StyledNumberFormat
-									thousandSeparator={true}
-									className="form-control mb-3"
-									disabled={currentBalance === 0}
-									value={amountToDeposit}
-									onValueChange={(values) =>
-									{
-										setAmountToDeposit(values.floatValue);
-									}}
-								/>
-
-								<StyledLabel
-									className="form-label"
-									style={
-										amountToDeposit !== undefined
-											? { transform: 'translateY(-1rem) translateY(0.1rem) scale(0.8)' }
-											: {}
-									}
-								>
-									Deposit Amount
-								</StyledLabel>
-								<div class="form-notch">
-									<div class="form-notch-leading"></div>
-									<div
-										class="form-notch-middle"
-										style={
-											amountToDeposit !== undefined ? { borderTop: 'none', width: '100.8px' } : { width: '100.8px' }
-										}
-									></div>
-									<div class="form-notch-trailing"></div>
-								</div>
-							</div>
-						)}
-						<StyledDescription>
-							Deposit fee: 0.0%
-							<br />
-							Withdrawal fee: 0.0%
-						</StyledDescription>
-						<StyledSecondary align="center">
-							You will receive TUSK-BNB token as a receipt for your deposited TUSK-BNB LP assets. This token is needed
-							to withdraw your TUSK-BNB LP.
-						</StyledSecondary>
-					</MDBTabsPane>
-					<MDBTabsPane show={activeTab === 'withdrawal'}>
-						{isAllowed && (
-							<div class="form-outline">
-								<StyledNumberFormat
-									thousandSeparator={true}
-									disabled={depositedAmount === 0}
-									className="form-control mb-3"
-									value={amountToWithdraw}
-									onValueChange={(values) =>
-									{
-										setAmountToWithdraw(values.floatValue);
-									}}
-								/>
-
-								<StyledLabel
-									className="form-label"
-									style={
-										amountToWithdraw !== undefined
-											? { transform: 'translateY(-1rem) translateY(0.1rem) scale(0.8)' }
-											: {}
-									}
-								>
-									Withdrawal Amount
-								</StyledLabel>
-								<div class="form-notch">
-									<div class="form-notch-leading"></div>
-									<div
-										class="form-notch-middle"
-										style={
-											amountToWithdraw !== undefined ? { borderTop: 'none', width: '120.8px' } : { width: '120.8px' }
-										}
-									></div>
-									<div class="form-notch-trailing"></div>
-								</div>
-							</div>
-						)}
-						<StyledDescription>Withdrawal will result in: </StyledDescription>
-						<StyledSecondary align="center">Redeem disruptTUSK token for TUSK</StyledSecondary>
-					</MDBTabsPane>
-				</MDBTabsContent>
-			</MDBCardBody>
-			<div>
-				{activeTab === 'deposit' && (
-					<div class="d-flex">
-						{isAllowed ? (
-							<>
-								<StyledButton onClick={handleDeposit} disabled={currentBalance === 0} style={{ marginRight: '2px' }}>
-									Deposit
-								</StyledButton>
-								<StyledButton onClick={(e) => handleDeposit(e, true)} disabled={currentBalance === 0}>
-									Deposit All
-								</StyledButton>
-							</>
-						) : (
-							<StyledButton onClick={handleApproval}>Approve</StyledButton>
-						)}
-					</div>
-				)}
-				{activeTab === 'withdrawal' && (
-					<div class="d-flex">
-						<StyledButton onClick={handleWithdrawal} disabled={depositedAmount === 0} style={{ marginRight: '2px' }}>
-							Withdraw
-						</StyledButton>
-						<StyledButton onClick={(e) => handleWithdrawal(e, true)} disabled={depositedAmount === 0}>
-							Withdraw All
-						</StyledButton>
-					</div>
-				)}
-			</div>
-		</StyledCard>
-	);
+                <StyledLabel
+                  className="form-label"
+                  style={
+                    amountToWithdraw !== undefined
+                      ? { transform: 'translateY(-1rem) translateY(0.1rem) scale(0.8)' }
+                      : {}
+                  }
+                >
+                  Withdrawal Amount
+                </StyledLabel>
+                <div class="form-notch">
+                  <div class="form-notch-leading"></div>
+                  <div
+                    class="form-notch-middle"
+                    style={
+                      amountToWithdraw !== undefined ? { borderTop: 'none', width: '120.8px' } : { width: '120.8px' }
+                    }
+                  ></div>
+                  <div class="form-notch-trailing"></div>
+                </div>
+              </div>
+            )}
+            <StyledDescription>Withdrawal will result in: </StyledDescription>
+            <StyledSecondary align="center">Redeem disruptTUSK token for TUSK</StyledSecondary>
+          </MDBTabsPane>
+        </MDBTabsContent>
+      </MDBCardBody>
+      <div>
+        {activeTab === 'deposit' && (
+          <div class="d-flex">
+            {isAllowed ? (
+              <>
+                <StyledButton onClick={handleDeposit} disabled={currentBalance === 0} style={{ marginRight: '2px' }}>
+                  Deposit
+                </StyledButton>
+                <StyledButton onClick={(e) => handleDeposit(e, true)} disabled={currentBalance === 0}>
+                  Deposit All
+                </StyledButton>
+              </>
+            ) : (
+              <StyledButton onClick={handleApproval}>Approve</StyledButton>
+            )}
+          </div>
+        )}
+        {activeTab === 'withdrawal' && (
+          <div class="d-flex">
+            <StyledButton onClick={handleWithdrawal} disabled={depositedAmount === 0} style={{ marginRight: '2px' }}>
+              Withdraw
+            </StyledButton>
+            <StyledButton onClick={(e) => handleWithdrawal(e, true)} disabled={depositedAmount === 0}>
+              Withdraw All
+            </StyledButton>
+          </div>
+        )}
+      </div>
+    </StyledCard>
+  );
 };
 
 const StyledCard = styled(MDBCard)`
