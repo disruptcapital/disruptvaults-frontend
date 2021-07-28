@@ -347,7 +347,7 @@ const Vault = (props) => {
                 </StyledButton>
                 <StyledButton
                   onClick={(e) => handleDeposit(e, true)}
-                  disabled={currentBalance === 0 || !amountToDeposit}
+                  disabled={currentBalance === 0}
                 >
                   Deposit All
                 </StyledButton>
