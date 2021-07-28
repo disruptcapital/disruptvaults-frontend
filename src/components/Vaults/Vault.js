@@ -220,7 +220,6 @@ const Vault = (props) => {
     return floatValue ? floatValue <= currentBalance : true;
   };
 
-  //<NumberFormat value={12} isAllowed={depositLimit} />;
   return (
     <StyledCard>
       <VaultHeader pool={pool} tvl={formatTvl(byDecimals(tvlPrice))} />
