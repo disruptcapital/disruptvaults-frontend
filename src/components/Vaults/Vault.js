@@ -11,7 +11,6 @@ import {
   MDBTabsLink,
   MDBTabsContent,
   MDBTabsPane,
-  MDBInput,
 } from 'mdb-react-ui-kit';
 import styled from 'styled-components';
 import VaultHeader from 'features/vault/components/VaultHeader';
@@ -33,7 +32,7 @@ const Vault = (props) => {
   const { pool = {} } = props;
   const { depositTokenAddress, vaultAddress, busdDepositTokenPath, routerAddress } = pool;
   const [iouBalance, setIOUBalance] = useState(new BigNumber(0));
-  const [currentBalance, setCurrentBalance] = useState(0);
+  const [currentBalance, setCurrentBalance] = useState(BigNumber(0));
   const [depositedAmount, setDepositedAmount] = useState(0);
   const [sharesByDecimals, setSharesByDecimals] = useState(0);
   const [amountToDeposit, setAmountToDeposit] = useState();
@@ -108,7 +107,7 @@ const Vault = (props) => {
       .call()
       .then((data) => {
         const curr = new BigNumber(data);
-        setCurrentBalance(curr.isZero() ? 0 : byDecimals(new BigNumber(data)).toFormat(4, BigNumber.ROUND_DOWN));
+        setCurrentBalance(curr.isZero() ? 0 : byDecimals(new BigNumber(data)));
       });
 
     vaultContract.methods
@@ -144,7 +143,7 @@ const Vault = (props) => {
         messageToast('Your deposit was successful.');
         setAmountToDeposit('');
         fetchBalance({ web3, address, tokenAddress: depositTokenAddress }).then((data) => {
-          setCurrentBalance(byDecimals(data).toFormat(4, BigNumber.ROUND_DOWN));
+          setCurrentBalance(byDecimals(data));
         });
 
         fetchBalance({ web3, address, tokenAddress: vaultAddress }).then((data) => {
@@ -174,7 +173,7 @@ const Vault = (props) => {
           messageToast('Your withdrawal was successful.');
           setAmountToWithdraw('');
           fetchBalance({ web3, address, tokenAddress: depositTokenAddress }).then((data) => {
-            setCurrentBalance(byDecimals(data).toFormat(4, BigNumber.ROUND_DOWN));
+            setCurrentBalance(byDecimals(data));
           });
 
           fetchBalance({ web3, address, tokenAddress: vaultAddress }).then((data) => {
@@ -190,7 +189,7 @@ const Vault = (props) => {
         .then((data) => {
           messageToast('Your withdrawal was successful.');
           fetchBalance({ web3, address, tokenAddress: depositTokenAddress }).then((data) => {
-            setCurrentBalance(byDecimals(data).toFormat(4, BigNumber.ROUND_DOWN));
+            setCurrentBalance(byDecimals(data));
           });
 
           fetchBalance({ web3, address, tokenAddress: vaultAddress }).then((data) => {
@@ -217,13 +216,18 @@ const Vault = (props) => {
     setActiveTab(value);
   };
 
+  const depositLimit = ({ floatValue }) => {
+    return floatValue ? floatValue <= currentBalance : true;
+  };
+
+  //<NumberFormat value={12} isAllowed={depositLimit} />;
   return (
     <StyledCard>
       <VaultHeader pool={pool} tvl={formatTvl(byDecimals(tvlPrice))} />
       <MDBCardBody>
         <div className="d-flex justify-content-evenly mb-3">
           <div>
-            <div>{currentBalance}</div>
+            <div>{currentBalance.toFormat(4, BigNumber.ROUND_DOWN)}</div>
             <StyledSecondary align="center">Wallet</StyledSecondary>
           </div>
           <div>
@@ -255,6 +259,7 @@ const Vault = (props) => {
                   onValueChange={(values) => {
                     setAmountToDeposit(values.floatValue);
                   }}
+                  isAllowed={depositLimit}
                 />
 
                 <StyledLabel
@@ -334,10 +339,17 @@ const Vault = (props) => {
           <div class="d-flex">
             {isAllowed ? (
               <>
-                <StyledButton onClick={handleDeposit} disabled={currentBalance === 0} style={{ marginRight: '2px' }}>
+                <StyledButton
+                  onClick={handleDeposit}
+                  disabled={currentBalance === 0 || !amountToDeposit}
+                  style={{ marginRight: '2px' }}
+                >
                   Deposit
                 </StyledButton>
-                <StyledButton onClick={(e) => handleDeposit(e, true)} disabled={currentBalance === 0}>
+                <StyledButton
+                  onClick={(e) => handleDeposit(e, true)}
+                  disabled={currentBalance === 0 || !amountToDeposit}
+                >
                   Deposit All
                 </StyledButton>
               </>
