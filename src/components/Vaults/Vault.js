@@ -28,6 +28,7 @@ import { fetchPrice } from 'web3/fetchPrice';
 import NumberFormat from 'react-number-format';
 import { messageToast } from 'common/toasts';
 import { byDecimals, convertAmountToRawNumber, isZero } from 'common/bignumber';
+import { MultiCall } from 'eth-multicall';
 
 const Vault = (props) =>
 {
@@ -44,14 +45,69 @@ const Vault = (props) =>
 	const [tvl, setTvl] = useState(0);
 	const [tvlPrice, setTVLPrice] = useState(new BigNumber(0));
 	const [pricePerFullShare, setPricePerFullShare] = useState(new BigNumber());
-	const [totalSupply, setTotalSupply] = useState(new BigNumber(0));
 	const { execute: approve, allowance } = useApprove();
+
+
+	const [vaultInfo, setVaultInfo] = useState();
+	const [tokenInfo, setTokenInfo] = useState();
+
+
+
 	useEffect(() =>
 	{
 		setIsAllowed(allowance > 0);
 	}, [allowance]);
 
 	const { slowRefresh } = useRefresh();
+
+
+	useEffect(() =>
+	{
+		if (!web3) return;
+		const multicall = new MultiCall(web3, pool.multicall);
+		const vaultContract = new web3.eth.Contract(vaultABI, vaultAddress);
+		const depositTokenContract = new web3.eth.Contract(erc20ABI, pool.depositTokenAddress);
+
+		const vaultCalls = [];
+		const depositTokenCalls = [];
+
+		vaultCalls.push({
+			balance: vaultContract.methods.balance(),
+			pricePerFullShare: vaultContract.methods.getPricePerFullShare(),
+			totalSupply: vaultContract.methods.totalSupply(),
+			balanceOf: vaultContract.methods.balanceOf(address)
+		});
+
+
+		depositTokenCalls.push({
+			balance: depositTokenContract.methods.balanceOf(address)
+		});
+
+		depositTokenCalls.push({
+			balance: depositTokenContract.methods.balanceOf(address)
+		});
+
+		multicall
+			.all([depositTokenCalls, vaultCalls])
+			.then(([depositTokenCallResults, vaultCallResults]) =>
+			{
+				setVaultInfo({
+					balance: new BigNumber(vaultCallResults[0].balance),
+					pricePerFullShare: new BigNumber(vaultCallResults[0].pricePerFullShare),
+					totalSupply: new BigNumber(vaultCallResults[0].totalSupply),
+					balanceOf: new BigNumber(vaultCallResults[0].balanceOf),
+				});
+
+				setTokenInfo({
+					balance: new BigNumber(depositTokenCallResults[0].balance)
+				});
+
+
+			});
+
+	}, [slowRefresh, web3, address, depositTokenAddress, vaultAddress]);
+
+
 	useEffect(() =>
 	{
 		async function update({ web3, address, depositTokenAddress, vaultAddress })
@@ -76,7 +132,6 @@ const Vault = (props) =>
 				const price = await fetchPrice({ web3, address, routerAddress, t, busdDepositTokenPath });
 				setTVLPrice(price);
 			}
-
 		}
 
 		if (web3)
@@ -85,85 +140,35 @@ const Vault = (props) =>
 		}
 	}, [slowRefresh, web3, address, routerAddress, tvl, busdDepositTokenPath]);
 
+
 	// Updates vault deposited balance and TVL
-	useEffect(() =>
+	useEffect(async () =>
 	{
 
-		async function update({ web3, vaultAddress, iouBalance, totalSupply })
+		async function update({ vaultInfo })
 		{
-			const vaultContract = new web3.eth.Contract(vaultABI, vaultAddress);
-			// Number of deposit tokens inside the vault.
-			const vaultBalance = await vaultContract.methods
-				.balance()
-				.call();
-
-			const vaultBalanceBn = new BigNumber(vaultBalance);
-			setTvl(byDecimals(vaultBalanceBn).toNumber());
+			setTvl(byDecimals(vaultInfo.balance).toNumber());
 
 			setDepositedAmount(
-				iouBalance.isZero() || totalSupply.isZero()
+				vaultInfo.balanceOf.isZero() || vaultInfo.totalSupply.isZero()
 					? 0
-					: byDecimals(iouBalance
-						.multipliedBy(vaultBalanceBn)
-						.dividedBy(totalSupply))
+					: byDecimals(vaultInfo.balanceOf
+						.multipliedBy(vaultInfo.balance)
+						.dividedBy(vaultInfo.totalSupply))
 						.toNumber(),
 			);
-			let sharesbydec = byDecimals(vaultBalanceBn);
+			let sharesbydec = byDecimals(vaultInfo.balance);
 			setSharesByDecimals(sharesbydec);
 
-
+			setCurrentBalance(tokenInfo.balance.isZero() ? 0 : byDecimals(tokenInfo.balance).toFormat(4));
+			setPricePerFullShare(byDecimals(vaultInfo.pricePerFullShare));
+			setIOUBalance(vaultInfo.balanceOf);
 		}
-		if (web3)
+		if (vaultInfo && tokenInfo)
 		{
-			update({ web3, vaultAddress, iouBalance, totalSupply });
+			await update({ vaultInfo });
 		}
-	}, [slowRefresh, web3, vaultAddress, iouBalance, totalSupply]);
-
-	useEffect(() =>
-	{
-		if (!web3) return;
-
-		const depositTokenContract = new web3.eth.Contract(erc20ABI, pool.depositTokenAddress);
-		const vaultContract = new web3.eth.Contract(vaultABI, pool.vaultAddress);
-
-
-		depositTokenContract.methods
-			.balanceOf(address)
-			.call()
-			.then((data) =>
-			{
-				const curr = new BigNumber(data);
-				setCurrentBalance(curr.isZero() ? 0 : byDecimals(new BigNumber(data)).toFormat(4));
-			});
-
-		vaultContract.methods
-			.getPricePerFullShare()
-			.call()
-			.then((ppfs) =>
-			{
-				let ppfsBN = new BigNumber(ppfs);
-				setPricePerFullShare(byDecimals(ppfsBN));
-			});
-
-		// Total supply of IOU tokens
-		vaultContract.methods
-			.totalSupply()
-			.call()
-			.then((totalSupply) =>
-			{
-				var totalSupplyBn = new BigNumber(totalSupply);
-				setTotalSupply(totalSupplyBn);
-				// IOU tokens owned by user
-				vaultContract.methods
-					.balanceOf(address)
-					.call()
-					.then((iouBalance) =>
-					{
-						var iouBalanceBn = new BigNumber(iouBalance);
-						setIOUBalance(iouBalanceBn);	
-					});
-			});
-	}, [web3, slowRefresh]);
+	}, [vaultInfo, tokenInfo]);
 
 	const handleDeposit = (e, isAll) =>
 	{
@@ -184,7 +189,7 @@ const Vault = (props) =>
 					setIOUBalance(dataBn);
 				});
 
-				
+
 			})
 			.catch((error) =>
 			{

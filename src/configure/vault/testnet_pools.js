@@ -23,7 +23,8 @@ export const testnetPools = [
     callFee: 0.5,
     buyTokenUrl: 'https://app.1inch.io/#/56/swap/BNB/BIFI',
 	routerAddress: "0xfb7dB149f497bC88773C3C5367cd97B405D9423d",
-	busdDepositTokenPath: ["0x44f556b630DEb4253a21De5f41542438043679c5", "0xbc21b907eb47a632544df5ad2744197b51ca9d20"]
+	busdDepositTokenPath: ["0x44f556b630DEb4253a21De5f41542438043679c5", "0xbc21b907eb47a632544df5ad2744197b51ca9d20"],
+	multicall: "0xb28D562b335A44F337e36b2CABDA3052edaB5bc4"
   },
   {
     id: 'fake-TUSK_BNB4',
@@ -49,6 +50,7 @@ export const testnetPools = [
     callFee: 0.5,
     buyTokenUrl: 'https://app.1inch.io/#/56/swap/BNB/BIFI',
 	routerAddress: "0xfb7dB149f497bC88773C3C5367cd97B405D9423d",
-	busdDepositTokenPath: ["0x44f556b630DEb4253a21De5f41542438043679c5", "0xbc21b907eb47a632544df5ad2744197b51ca9d20"]
+	busdDepositTokenPath: ["0x44f556b630DEb4253a21De5f41542438043679c5", "0xbc21b907eb47a632544df5ad2744197b51ca9d20"],
+	multicall: "0xb28D562b335A44F337e36b2CABDA3052edaB5bc4"
   },
 ];
