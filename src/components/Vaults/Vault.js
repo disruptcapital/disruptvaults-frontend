@@ -44,8 +44,6 @@ const Vault = (props) => {
   const [totalSupply, setTotalSupply] = useState(new BigNumber(0));
   const { execute: approve, allowance } = useApprove();
 
-  console.log(address);
-
   useEffect(() => {
     setIsAllowed(allowance > 0);
   }, [allowance]);

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { ErrorBoundary } from 'react-error-boundary';
 import { Provider } from 'react-redux';
 import store from './common/store';
 
@@ -9,6 +10,7 @@ import './App.scss';
 import { Vaults } from 'components/Vaults';
 import { Header } from 'components/Header';
 import About from 'features/about/About';
+import Error from 'features/error/Error';
 
 import Web3Modal from 'web3modal';
 import { getNetworkConnectors } from 'common/getNetworkData';
@@ -81,6 +83,11 @@ const App = () => {
 
           <div class="mb-3">
             <Router>
+            <ErrorBoundary
+              fallbackRender={({error}) => (
+                <Error error={error}/>
+              )}
+            >
               <Switch>
                 <Route path="/about">
                   <About />
@@ -89,6 +96,7 @@ const App = () => {
                   <Vaults />
                 </Route>
               </Switch>
+              </ErrorBoundary>
             </Router>
           </div>
         </MDBContainer>
