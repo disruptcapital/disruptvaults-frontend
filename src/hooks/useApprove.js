@@ -37,7 +37,7 @@ const useApprove = () => {
           messageToast('An error occurred while approving access to the vault.');
         });
     },
-    [approval],
+    [],
   );
 
   return { execute, status, allowance, error };

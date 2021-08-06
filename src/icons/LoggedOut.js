@@ -6,10 +6,6 @@ const StyledLoggedOut = styled(UserCircle)`
   color: #cdcdcd;
 `;
 const LoggedOutIcon = (props) => {
-  // from props.
-  const fill = '#4f4f4f';
-  //color: ${({ theme }) => theme.alert.background};
-
   return <StyledLoggedOut />;
 };
 

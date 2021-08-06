@@ -25,7 +25,7 @@ import { fetchBalance } from 'web3/fetchBalance';
 import { fetchPrice } from 'web3/fetchPrice';
 import NumberFormat from 'react-number-format';
 import { messageToast } from 'common/toasts';
-import { byDecimals, convertAmountToRawNumber, isZero } from 'common/bignumber';
+import { byDecimals, convertAmountToRawNumber } from 'common/bignumber';
 
 const Vault = (props) => {
   const { web3, address } = useConnectWallet();
@@ -43,6 +43,9 @@ const Vault = (props) => {
   const [pricePerFullShare, setPricePerFullShare] = useState(new BigNumber());
   const [totalSupply, setTotalSupply] = useState(new BigNumber(0));
   const { execute: approve, allowance } = useApprove();
+
+  console.log(address);
+
   useEffect(() => {
     setIsAllowed(allowance > 0);
   }, [allowance]);
@@ -106,7 +109,6 @@ const Vault = (props) => {
       .balanceOf(address)
       .call()
       .then((data) => {
-        const curr = new BigNumber(data);
         setCurrentBalance(byDecimals(new BigNumber(data)));
       });
 
@@ -134,7 +136,7 @@ const Vault = (props) => {
             setIOUBalance(iouBalanceBn);
           });
       });
-  }, [web3, slowRefresh]);
+  }, [web3, address, slowRefresh, pool.depositTokenAddress, pool.vaultAddress]);
 
   const handleDeposit = (e, isAll) => {
     const amount = isAll ? null : convertAmountToRawNumber(amountToDeposit, 18).toString();

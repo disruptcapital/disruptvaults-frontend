@@ -1,5 +1,5 @@
 import { vaultABI } from '../configure';
-import { transactionToast, messageToast } from 'common/toasts';
+import { transactionToast } from 'common/toasts';
 
 export const withdraw = async ({ web3, address, vaultAddress, amount, isAll }) => {
   const contract = new web3.eth.Contract(vaultABI, vaultAddress);

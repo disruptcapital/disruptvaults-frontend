@@ -27,11 +27,11 @@ const App = () => {
   const [web3Modal, setModal] = useState(null);
   const { connectWallet, web3, address, networkId, connected, connectWalletPending } = useConnectWallet();
   const { disconnectWallet } = useDisconnectWallet();
-  const { theme = {}, isDarkMode, setIsDarkMode } = useTheme();
+  const { theme = {} } = useTheme();
 
   useEffect(() => {
     setModal(new Web3Modal({ ...getNetworkConnectors(), theme: theme.name || 'light' }));
-  }, [setModal]);
+  }, [setModal, theme.name]);
 
   useEffect(() => {
     if (web3Modal && (web3Modal.cachedProvider || window.ethereum)) {
@@ -96,7 +96,7 @@ const App = () => {
       <StyledFooter className="mt-auto text-center">
         <p>
           Yield Optimizing Strategies by{' '}
-          <a href="https://twitter.com/disruptvaults" target="_blank">
+          <a href="https://twitter.com/disruptvaults" target="_blank" rel="noreferrer">
             @disruptcapital
           </a>
           .
