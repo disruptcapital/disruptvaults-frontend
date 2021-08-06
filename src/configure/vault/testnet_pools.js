@@ -22,9 +22,12 @@ export const testnetPools = [
     assets: ['BIFI'],
     callFee: 0.5,
     buyTokenUrl: 'https://app.1inch.io/#/56/swap/BNB/BIFI',
-	routerAddress: "0xfb7dB149f497bC88773C3C5367cd97B405D9423d",
-	busdDepositTokenPath: ["0x44f556b630DEb4253a21De5f41542438043679c5", "0xbc21b907eb47a632544df5ad2744197b51ca9d20"],
-	multicall: "0xb28D562b335A44F337e36b2CABDA3052edaB5bc4"
+    routerAddress: '0xfb7dB149f497bC88773C3C5367cd97B405D9423d',
+    busdDepositTokenPath: ['0x44f556b630DEb4253a21De5f41542438043679c5', '0xbc21b907eb47a632544df5ad2744197b51ca9d20'],
+    multicall: '0xb28D562b335A44F337e36b2CABDA3052edaB5bc4',
+    depositDescription:
+      'You will receive CAKE-BNB token as a receipt for your deposited CAKE-BNB LP assets. This token is needed to withdraw your CAKE-BNB LP.',
+    withdrawDescription: 'Redeem disruptCAKE token for CAKE',
   },
   {
     id: 'fake-TUSK_BNB4',
@@ -49,8 +52,11 @@ export const testnetPools = [
     assets: ['BIFI'],
     callFee: 0.5,
     buyTokenUrl: 'https://app.1inch.io/#/56/swap/BNB/BIFI',
-	routerAddress: "0xfb7dB149f497bC88773C3C5367cd97B405D9423d",
-	busdDepositTokenPath: ["0x44f556b630DEb4253a21De5f41542438043679c5", "0xbc21b907eb47a632544df5ad2744197b51ca9d20"],
-	multicall: "0xb28D562b335A44F337e36b2CABDA3052edaB5bc4"
+    routerAddress: '0xfb7dB149f497bC88773C3C5367cd97B405D9423d',
+    busdDepositTokenPath: ['0x44f556b630DEb4253a21De5f41542438043679c5', '0xbc21b907eb47a632544df5ad2744197b51ca9d20'],
+    multicall: '0xb28D562b335A44F337e36b2CABDA3052edaB5bc4',
+    depositDescription:
+      'You will receive TUSK-BNB token as a receipt for your deposited TUSK-BNB LP assets. This token is needed to withdraw your TUSK-BNB LP.',
+    withdrawDescription: 'Redeem disruptTUSK token for TUSK',
   },
 ];

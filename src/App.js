@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import store from './common/store';
 
@@ -7,6 +8,8 @@ import './App.scss';
 
 import { Vaults } from 'components/Vaults';
 import { Header } from 'components/Header';
+import About from 'features/about/About';
+
 import Web3Modal from 'web3modal';
 import { getNetworkConnectors } from 'common/getNetworkData';
 import { useConnectWallet, useDisconnectWallet } from 'features/home/redux/hooks';
@@ -77,7 +80,16 @@ const App = () => {
           </div>
 
           <div class="mb-3">
-            <Vaults />
+            <Router>
+              <Switch>
+                <Route path="/about">
+                  <About />
+                </Route>
+                <Route path="/">
+                  <Vaults />
+                </Route>
+              </Switch>
+            </Router>
           </div>
         </MDBContainer>
       </main>

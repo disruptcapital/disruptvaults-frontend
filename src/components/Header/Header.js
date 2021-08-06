@@ -50,7 +50,7 @@ const Header = (props) => {
     <header>
       <StyledNav expand="md" fixed>
         <MDBContainer breakpoint="xl">
-          <MDBNavbarBrand href="#">
+          <MDBNavbarBrand href="/">
             <DisruptVaultsIcon color={theme.text} />
           </MDBNavbarBrand>
           <MDBNavbarToggler

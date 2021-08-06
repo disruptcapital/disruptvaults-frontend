@@ -107,7 +107,7 @@ const Vault = (props) => {
       .call()
       .then((data) => {
         const curr = new BigNumber(data);
-        setCurrentBalance(curr.isZero() ? 0 : byDecimals(new BigNumber(data)));
+        setCurrentBalance(byDecimals(new BigNumber(data)));
       });
 
     vaultContract.methods
@@ -138,6 +138,11 @@ const Vault = (props) => {
 
   const handleDeposit = (e, isAll) => {
     const amount = isAll ? null : convertAmountToRawNumber(amountToDeposit, 18).toString();
+
+    if (isAll) {
+      setAmountToDeposit(currentBalance.toFormat(4, BigNumber.ROUND_DOWN));
+    }
+
     deposit({ web3, address, vaultAddress, amount, isAll })
       .then((data) => {
         messageToast('Your deposit was successful.');
@@ -185,9 +190,11 @@ const Vault = (props) => {
           messageToast('An error occurred while withdrawing from the vault.');
         });
     } else {
+      setAmountToWithdraw(byDecimals(iouBalance.multipliedBy(pricePerFullShare)).toFormat(4, BigNumber.ROUND_DOWN));
       withdraw({ web3, address, vaultAddress, amount, isAll })
         .then((data) => {
           messageToast('Your withdrawal was successful.');
+          setAmountToWithdraw('');
           fetchBalance({ web3, address, tokenAddress: depositTokenAddress }).then((data) => {
             setCurrentBalance(byDecimals(data));
           });
@@ -218,6 +225,10 @@ const Vault = (props) => {
 
   const depositLimit = ({ floatValue }) => {
     return floatValue ? floatValue <= currentBalance : true;
+  };
+
+  const withdrawLimit = ({ floatValue }) => {
+    return floatValue ? floatValue <= depositedAmount : true;
   };
 
   return (
@@ -253,7 +264,7 @@ const Vault = (props) => {
                 <StyledNumberFormat
                   thousandSeparator={true}
                   className="form-control mb-3"
-                  disabled={currentBalance === 0}
+                  disabled={currentBalance.isZero()}
                   value={amountToDeposit}
                   onValueChange={(values) => {
                     setAmountToDeposit(values.floatValue);
@@ -288,10 +299,7 @@ const Vault = (props) => {
               <br />
               Withdrawal fee: 0.0%
             </StyledDescription>
-            <StyledSecondary align="center">
-              You will receive TUSK-BNB token as a receipt for your deposited TUSK-BNB LP assets. This token is needed
-              to withdraw your TUSK-BNB LP.
-            </StyledSecondary>
+            <StyledSecondary align="center">{pool.depositDescription}</StyledSecondary>
           </MDBTabsPane>
           <MDBTabsPane show={activeTab === 'withdrawal'}>
             {isAllowed && (
@@ -304,6 +312,7 @@ const Vault = (props) => {
                   onValueChange={(values) => {
                     setAmountToWithdraw(values.floatValue);
                   }}
+                  isAllowed={withdrawLimit}
                 />
 
                 <StyledLabel
@@ -329,7 +338,7 @@ const Vault = (props) => {
               </div>
             )}
             <StyledDescription>Withdrawal will result in: </StyledDescription>
-            <StyledSecondary align="center">Redeem disruptTUSK token for TUSK</StyledSecondary>
+            <StyledSecondary align="center">{pool.withdrawDescription}</StyledSecondary>
           </MDBTabsPane>
         </MDBTabsContent>
       </MDBCardBody>
@@ -340,15 +349,12 @@ const Vault = (props) => {
               <>
                 <StyledButton
                   onClick={handleDeposit}
-                  disabled={currentBalance === 0 || !amountToDeposit}
+                  disabled={currentBalance.isZero() || !amountToDeposit}
                   style={{ marginRight: '2px' }}
                 >
                   Deposit
                 </StyledButton>
-                <StyledButton
-                  onClick={(e) => handleDeposit(e, true)}
-                  disabled={currentBalance === 0}
-                >
+                <StyledButton onClick={(e) => handleDeposit(e, true)} disabled={currentBalance.isZero()}>
                   Deposit All
                 </StyledButton>
               </>
@@ -359,7 +365,11 @@ const Vault = (props) => {
         )}
         {activeTab === 'withdrawal' && (
           <div class="d-flex">
-            <StyledButton onClick={handleWithdrawal} disabled={depositedAmount === 0} style={{ marginRight: '2px' }}>
+            <StyledButton
+              onClick={handleWithdrawal}
+              disabled={depositedAmount === 0 || !amountToWithdraw}
+              style={{ marginRight: '2px' }}
+            >
               Withdraw
             </StyledButton>
             <StyledButton onClick={(e) => handleWithdrawal(e, true)} disabled={depositedAmount === 0}>
