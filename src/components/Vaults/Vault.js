@@ -28,21 +28,33 @@ import { messageToast } from 'common/toasts';
 import { byDecimals, convertAmountToRawNumber } from 'common/bignumber';
 
 const Vault = (props) => {
-  const { web3, address } = useConnectWallet();
+  const { web3, address, networkId } = useConnectWallet();
   const { pool = {} } = props;
   const { depositTokenAddress, vaultAddress, busdDepositTokenPath, routerAddress } = pool;
-  const [iouBalance, setIOUBalance] = useState(new BigNumber(0));
+
+  // the user's wallet amount
   const [currentBalance, setCurrentBalance] = useState(BigNumber(0));
-  const [depositedAmount, setDepositedAmount] = useState(0);
+
+  // the user's deposited amount in vault
+  const [iouBalance, setIOUBalance] = useState(new BigNumber(0));
+
   const [sharesByDecimals, setSharesByDecimals] = useState(0);
   const [amountToDeposit, setAmountToDeposit] = useState();
   const [amountToWithdraw, setAmountToWithdraw] = useState();
   const [isAllowed, setIsAllowed] = useState(null);
   const [tvl, setTvl] = useState(0);
   const [tvlPrice, setTVLPrice] = useState(new BigNumber(0));
-  const [pricePerFullShare, setPricePerFullShare] = useState(new BigNumber());
+  const [pricePerFullShare, setPricePerFullShare] = useState(new BigNumber(0));
   const [totalSupply, setTotalSupply] = useState(new BigNumber(0));
   const { execute: approve, allowance } = useApprove();
+
+  
+  useEffect(() => {
+    if (networkId !== Number(process.env.REACT_APP_NETWORK_ID)) {
+      setCurrentBalance(new BigNumber(0));
+      setIOUBalance(new BigNumber(0));
+    }
+  }, [networkId]);
 
   useEffect(() => {
     setIsAllowed(allowance > 0);
@@ -76,7 +88,7 @@ const Vault = (props) => {
 
   // Updates vault deposited balance and TVL
   useEffect(() => {
-    async function update({ web3, vaultAddress, iouBalance, totalSupply }) {
+    async function update({ web3, vaultAddress }) {
       const vaultContract = new web3.eth.Contract(vaultABI, vaultAddress);
       // Number of deposit tokens inside the vault.
       const vaultBalance = await vaultContract.methods.balance().call();
@@ -84,18 +96,13 @@ const Vault = (props) => {
       const vaultBalanceBn = new BigNumber(vaultBalance);
       setTvl(byDecimals(vaultBalanceBn).toNumber());
 
-      setDepositedAmount(
-        iouBalance.isZero() || totalSupply.isZero()
-          ? 0
-          : byDecimals(iouBalance.multipliedBy(vaultBalanceBn).dividedBy(totalSupply)).toNumber(),
-      );
-      let sharesbydec = byDecimals(vaultBalanceBn);
+      const sharesbydec = byDecimals(vaultBalanceBn);
       setSharesByDecimals(sharesbydec);
     }
     if (web3) {
-      update({ web3, vaultAddress, iouBalance, totalSupply });
+      update({ web3, vaultAddress });
     }
-  }, [slowRefresh, web3, vaultAddress, iouBalance, totalSupply]);
+  }, [slowRefresh, web3, vaultAddress]);
 
   useEffect(() => {
     if (!web3) return;
@@ -129,9 +136,9 @@ const Vault = (props) => {
         vaultContract.methods
           .balanceOf(address)
           .call()
-          .then((iouBalance) => {
-            var iouBalanceBn = new BigNumber(iouBalance);
-            setIOUBalance(iouBalanceBn);
+          .then((data) => {
+            var dataBn = new BigNumber(data);
+            setIOUBalance(byDecimals(dataBn));
           });
       });
   }, [web3, address, slowRefresh, pool.depositTokenAddress, pool.vaultAddress]);
@@ -183,7 +190,7 @@ const Vault = (props) => {
 
           fetchBalance({ web3, address, tokenAddress: vaultAddress }).then((data) => {
             var dataBn = new BigNumber(data);
-            setIOUBalance(dataBn);
+            setIOUBalance(byDecimals(dataBn));
           });
         })
         .catch((error) => {
@@ -201,7 +208,7 @@ const Vault = (props) => {
 
           fetchBalance({ web3, address, tokenAddress: vaultAddress }).then((data) => {
             var dataBn = new BigNumber(data);
-            setIOUBalance(dataBn);
+            setIOUBalance(byDecimals(dataBn));
           });
         })
         .catch((error) => {
@@ -228,7 +235,7 @@ const Vault = (props) => {
   };
 
   const withdrawLimit = ({ floatValue }) => {
-    return floatValue ? floatValue <= depositedAmount : true;
+    return floatValue ? floatValue <= iouBalance : true;
   };
 
   return (
@@ -241,7 +248,7 @@ const Vault = (props) => {
             <StyledSecondary align="center">Wallet</StyledSecondary>
           </div>
           <div>
-            <div>{byDecimals(iouBalance.multipliedBy(pricePerFullShare)).toFormat(4, BigNumber.ROUND_DOWN)}</div>
+            <div>{iouBalance.multipliedBy(pricePerFullShare).toFormat(4, BigNumber.ROUND_DOWN)}</div>
             <StyledSecondary align="center">Deposited</StyledSecondary>
           </div>
         </div>
@@ -306,7 +313,7 @@ const Vault = (props) => {
               <div class="form-outline">
                 <StyledNumberFormat
                   thousandSeparator={true}
-                  disabled={depositedAmount === 0}
+                  disabled={iouBalance.isZero()}
                   className="form-control mb-3"
                   value={amountToWithdraw}
                   onValueChange={(values) => {
@@ -367,12 +374,12 @@ const Vault = (props) => {
           <div class="d-flex">
             <StyledButton
               onClick={handleWithdrawal}
-              disabled={depositedAmount === 0 || !amountToWithdraw}
+              disabled={iouBalance.isZero() || !amountToWithdraw}
               style={{ marginRight: '2px' }}
             >
               Withdraw
             </StyledButton>
-            <StyledButton onClick={(e) => handleWithdrawal(e, true)} disabled={depositedAmount === 0}>
+            <StyledButton onClick={(e) => handleWithdrawal(e, true)} disabled={iouBalance.isZero()}>
               Withdraw All
             </StyledButton>
           </div>
